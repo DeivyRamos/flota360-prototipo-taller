@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Prototipo de gestión operativa para talleres que atienden flotas privadas." />
+  <title>Flota 360 — Control Operacional de Taller</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- TOP NAV (desktop) -->
+<header class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <div class="brand">
+      <div class="logo-icon">F3</div>
+      <div class="brand-text">
+        <span class="brand-name">Flota 360</span>
+        <span class="brand-sub">Control Operacional</span>
+      </div>
+    </div>
+    <nav class="desktop-nav">
+      <button class="navbtn active" data-section="hero">Inicio</button>
+      <button class="navbtn" data-section="panel">Panel</button>
+      <button class="navbtn" data-section="recepcion">Recepción</button>
+      <button class="navbtn" data-section="ot">Orden de Trabajo</button>
+      <button class="navbtn" data-section="diagnostico">Diagnóstico</button>
+      <button class="navbtn" data-section="cotizacion">Cotización</button>
+      <button class="navbtn" data-section="costos">Costos</button>
+      <button class="navbtn" data-section="proveedores">Proveedores</button>
+      <button class="navbtn" data-section="evidencia">Evidencia</button>
+      <button class="navbtn" data-section="calidad">Calidad</button>
+      <button class="navbtn" data-section="entrega">Entrega</button>
+      <button class="navbtn" data-section="portal">Portal Cliente</button>
+    </nav>
+    <button class="cta-top" onclick="scrollToSection('hero')">Ver demo</button>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main-wrap">
+
+  <!-- ① HERO -->
+  <section id="hero" class="section active">
+    <div class="hero-wrap">
+      <div class="hero-content">
+        <div class="hero-badge">Control operacional para talleres B2B</div>
+        <h1 class="hero-title">Gestiona tu taller<br>como lo merece<br>una flota privada</h1>
+        <p class="hero-sub">Recepción digital, órdenes de trabajo, evidencia, autorizaciones, costos y seguimiento del cliente en un solo flujo.</p>
+        <div class="hero-btns">
+          <button class="btn-primary lg" onclick="goSection('panel')">Ver flujo operativo</button>
+          <button class="btn-ghost lg" onclick="goSection('portal')">Ver portal cliente</button>
+        </div>
+        <div class="hero-benefits">
+          <div class="benefit">
+            <span class="benefit-icon">🛡️</span>
+            <div>
+              <strong>Menos trabajos sin autorización</strong>
+              <p>Cada trabajo adicional requiere aprobación formal antes de ejecutarse.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <span class="benefit-icon">📊</span>
+            <div>
+              <strong>Mayor control de costos por orden</strong>
+              <p>Repuestos, mano de obra e imprevistos vinculados a cada OT.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <span class="benefit-icon">🔍</span>
+            <div>
+              <strong>Más transparencia para flotas</strong>
+              <p>El encargado de flota ve el estado, evidencia y fechas en tiempo real.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-header">
+              <div class="ph-logo">F3</div>
+              <div>
+                <div class="ph-title">Flota 360</div>
+                <div class="ph-sub">Portal Cliente</div>
+              </div>
+            </div>
+            <div class="phone-body">
+              <div class="ph-section-label">Mis vehículos</div>
+              <div class="ph-card status-green">
+                <div class="ph-card-top">
+                  <strong>PPB-1234 · Toyota Hilux</strong>
+                  <span class="ph-badge green">Listo para entrega</span>
+                </div>
+                <p>OT-0042 · Mantenimiento 80.000 km</p>
+                <p class="ph-meta">📅 Entrega hoy 16:00 hrs</p>
+              </div>
+              <div class="ph-card">
+                <div class="ph-card-top">
+                  <strong>KLM-8891 · Chevrolet NPR</strong>
+                  <span class="ph-badge amber">En diagnóstico</span>
+                </div>
+                <p>OT-0043 · Falla sistema frenos</p>
+                <p class="ph-meta">⏱ Diagnóstico en curso</p>
+              </div>
+              <div class="ph-card status-blue">
+                <div class="ph-card-top">
+                  <strong>GHJ-5521 · Nissan Frontier</strong>
+                  <span class="ph-badge blue">Esperando autorización</span>
+                </div>
+                <p>OT-0044 · Cotización lista: $285.000</p>
+                <button class="ph-btn" onclick="openModal('modalCot')">Revisar y aprobar</button>
+              </div>
+              <div class="ph-section-label">Próximas acciones</div>
+              <div class="ph-alert">⚠️ GHJ-5521 requiere tu aprobación para continuar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② PANEL EJECUTIVO -->
+  <section id="panel" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Panel Ejecutivo</h2>
+        <p>Vista operacional del taller en tiempo real</p>
+      </div>
+      <div class="section-actions">
+        <button class="btn-ghost sm" onclick="goSection('recepcion')">+ Nueva recepción</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon blue">📋</div>
+        <div class="kpi-value">18</div>
+        <div class="kpi-label">Órdenes abiertas</div>
+        <div class="kpi-note">5 esperan autorización</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon amber">🔧</div>
+        <div class="kpi-value">6</div>
+        <div class="kpi-label">En diagnóstico</div>
+        <div class="kpi-note">3 con fotos pendientes</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon purple">💬</div>
+        <div class="kpi-value">5</div>
+        <div class="kpi-label">Cotizaciones pendientes</div>
+        <div class="kpi-note">Esperando respuesta cliente</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon orange">📦</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-label">Esperando repuestos</div>
+        <div class="kpi-note">Proveedores confirmados</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon green">🚗</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-label">Entregas comprometidas</div>
+        <div class="kpi-note">Hoy y mañana</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon teal">💰</div>
+        <div class="kpi-value">$2.1M</div>
+        <div class="kpi-label">Margen estimado</div>
+        <div class="kpi-note">OTs abiertas del mes</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon red">⚠️</div>
+        <div class="kpi-value">$420k</div>
+        <div class="kpi-label">Gastos sin rendir</div>
+        <div class="kpi-note">Sin OT asociada</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon yellow">🔔</div>
+        <div class="kpi-value">2</div>
+        <div class="kpi-label">Alertas de calidad</div>
+        <div class="kpi-note">Requieren revisión</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-header">
+          <h3>Flujo operativo</h3>
+          <span class="tag blue">8 etapas</span>
+        </div>
+        <div class="pipeline">
+          <div class="pipe-step done">
+            <div class="pipe-num">1</div>
+            <div class="pipe-text">
+              <strong>Recepción</strong>
+              <small>Digital con fotos</small>
+            </div>
+          </div>
+          <div class="pipe-step done">
+            <div class="pipe-num">2</div>
+            <div class="pipe-text">
+              <strong>Diagnóstico</strong>
+              <small>Confirmado vs sospechado</small>
+            </div>
+          </div>
+          <div class="pipe-step current">
+            <div class="pipe-num">3</div>
+            <div class="pipe-text">
+              <strong>Cotización</strong>
+              <small>Aprobación digital</small>
+            </div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">4</div>
+            <div class="pipe-text">
+              <strong>Autorización</strong>
+              <small>Formaliza el trabajo</small>
+            </div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">5</div>
+            <div class="pipe-text">
+              <strong>Ejecución</strong>
+              <small>Con costos por OT</small>
+            </div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">6</div>
+            <div class="pipe-text">
+              <strong>Calidad</strong>
+              <small>Checklist + prueba ruta</small>
+            </div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">7</div>
+            <div class="pipe-text">
+              <strong>Entrega</strong>
+              <small>Firma + garantía</small>
+            </div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">8</div>
+            <div class="pipe-text">
+              <strong>Seguimiento</strong>
+              <small>72 horas post entrega</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>OTs activas</h3>
+          <span class="tag">Hoy</span>
+        </div>
+        <div class="ot-list">
+          <div class="ot-row" onclick="goSection('ot')">
+            <div class="ot-row-info">
+              <strong>OT-0042</strong>
+              <span>PPB-1234 · Transportes del Sur</span>
+            </div>
+            <span class="badge green">Listo entrega</span>
+          </div>
+          <div class="ot-row" onclick="goSection('cotizacion')">
+            <div class="ot-row-info">
+              <strong>OT-0043</strong>
+              <span>KLM-8891 · LogiRed SpA</span>
+            </div>
+            <span class="badge amber">Diagnóstico</span>
+          </div>
+          <div class="ot-row">
+            <div class="ot-row-info">
+              <strong>OT-0044</strong>
+              <span>GHJ-5521 · Seguridad Norte</span>
+            </div>
+            <span class="badge blue">Esperando autorización</span>
+          </div>
+          <div class="ot-row">
+            <div class="ot-row-info">
+              <strong>OT-0045</strong>
+              <span>DFG-0099 · Construcciones PC</span>
+            </div>
+            <span class="badge orange">Esperando repuestos</span>
+          </div>
+          <div class="ot-row">
+            <div class="ot-row-info">
+              <strong>OT-0046</strong>
+              <span>RRQ-4412 · Fumigaciones Bio</span>
+            </div>
+            <span class="badge purple">En ejecución</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ RECEPCIÓN DIGITAL -->
+  <section id="recepcion" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Recepción Digital</h2>
+        <p>La recepción formal evita reclamos posteriores y deja trazabilidad desde el primer minuto.</p>
+      </div>
+      <span class="tag blue">Nuevo ingreso</span>
+    </div>
+
+    <div class="two-col-form">
+      <div class="card">
+        <div class="card-header"><h3>Datos del cliente</h3></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Empresa / Cliente</label>
+            <input type="text" value="Transportes del Sur SpA" readonly />
+          </div>
+          <div class="form-group">
+            <label>Encargado de flota</label>
+            <input type="text" value="Carlos Fuentes" readonly />
+          </div>
+          <div class="form-group">
+            <label>Conductor</label>
+            <input type="text" value="Miguel Torres" readonly />
+          </div>
+          <div class="form-group">
+            <label>Contacto / Teléfono</label>
+            <input type="text" value="+56 9 8812 3344" readonly />
+          </div>
+        </div>
+
+        <div class="card-header" style="margin-top:20px"><h3>Datos del vehículo</h3></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Patente</label>
+            <input type="text" value="PPB-1234" readonly />
+          </div>
+          <div class="form-group">
+            <label>Marca / Modelo</label>
+            <input type="text" value="Toyota Hilux 4x4" readonly />
+          </div>
+          <div class="form-group">
+            <label>Kilometraje de entrada</label>
+            <input type="text" value="79.840 km" readonly />
+          </div>
+          <div class="form-group">
+            <label>Combustible</label>
+            <select>
+              <option selected>3/4 del estanque</option>
+              <option>Lleno</option>
+              <option>1/2</option>
+              <option>1/4</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card-header" style="margin-top:20px"><h3>Estado inicial</h3></div>
+        <div class="form-grid cols-1">
+          <div class="form-group">
+            <label>Síntoma reportado por el conductor</label>
+            <textarea readonly>Ruido metálico al frenar. Vibración leve en dirección sobre 80 km/h. Luz de check engine encendida hace 3 días.</textarea>
+          </div>
+          <div class="form-group">
+            <label>Daños preexistentes</label>
+            <textarea readonly>Rayón en puerta delantera derecha (2 cm). Parachoque trasero con golpe menor. Se documentó con fotos.</textarea>
+          </div>
+          <div class="form-group">
+            <label>Pertenencias declaradas</label>
+            <textarea readonly>Chaleco reflectante en asiento trasero. Extintor portátil en maletero.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header"><h3>Fotos de ingreso</h3></div>
+          <div class="photo-grid">
+            <div class="photo-box has-photo">
+              <span class="photo-label">Frente</span>
+              <div class="photo-thumb">🚗</div>
+            </div>
+            <div class="photo-box has-photo">
+              <span class="photo-label">Lateral der.</span>
+              <div class="photo-thumb">🚗</div>
+            </div>
+            <div class="photo-box has-photo">
+              <span class="photo-label">Lateral izq.</span>
+              <div class="photo-thumb">🚗</div>
+            </div>
+            <div class="photo-box has-photo">
+              <span class="photo-label">Trasero</span>
+              <div class="photo-thumb">🚗</div>
+            </div>
+            <div class="photo-box has-photo">
+              <span class="photo-label">Interior</span>
+              <div class="photo-thumb">🪑</div>
+            </div>
+            <div class="photo-box add">
+              <span class="photo-label">+ Agregar</span>
+              <div class="photo-thumb">📷</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><h3>Responsables de recepción</h3></div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Recibe en taller</label>
+              <input type="text" value="Roberto Díaz (Jefe de patio)" readonly />
+            </div>
+            <div class="form-group">
+              <label>Autoriza ingreso</label>
+              <input type="text" value="Carlos Fuentes (Flota)" readonly />
+            </div>
+          </div>
+          <div class="info-box blue" style="margin-top:12px">
+            ✅ <strong>Recepción firmada digitalmente</strong> — 29/06/2026 09:14 hrs. Ambas partes notificadas por correo.
+          </div>
+        </div>
+
+        <div class="card value-card" style="margin-top:16px">
+          <div class="value-icon">💡</div>
+          <p>La recepción formal evita reclamos posteriores y deja trazabilidad desde el primer minuto.</p>
+          <button class="btn-primary sm" onclick="goSection('ot')">Ver Orden de Trabajo →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ ORDEN DE TRABAJO -->
+  <section id="ot" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Orden de Trabajo</h2>
+        <p>Trazabilidad completa desde el ingreso hasta la entrega</p>
+      </div>
+      <div class="section-actions">
+        <span class="badge green">Listo para entrega</span>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card ot-card">
+          <div class="ot-number">OT-0042</div>
+          <div class="ot-meta-grid">
+            <div class="ot-meta-item">
+              <span class="ot-meta-label">Cliente / Empresa</span>
+              <span class="ot-meta-val">Transportes del Sur SpA</span>
+            </div>
+            <div class="ot-meta-item">
+              <span class="ot-meta-label">Vehículo</span>
+              <span class="ot-meta-val">Toyota Hilux — PPB-1234</span>
+            </div>
+            <div class="ot-meta-item">
+              <span class="ot-meta-label">Responsable operativo</span>
+              <span class="ot-meta-val">Roberto Díaz</span>
+            </div>
+            <div class="ot-meta-item">
+              <span class="ot-meta-label">Mecánico asignado</span>
+              <span class="ot-meta-val">Jorge Pizarro</span>
+            </div>
+            <div class="ot-meta-item">
+              <span class="ot-meta-label">Fecha de ingreso</span>
+              <span class="ot-meta-val">27/06/2026</span>
+            </div>
+            <div class="ot-meta-item">
+              <span class="ot-meta-label">Entrega comprometida</span>
+              <span class="ot-meta-val">29/06/2026 — Hoy</span>
+            </div>
+            <div class="ot-meta-item">
+              <span class="ot-meta-label">Prioridad</span>
+              <span class="ot-meta-val"><span class="badge amber">Alta</span></span>
+            </div>
+            <div class="ot-meta-item">
+              <span class="ot-meta-label">Estado actual</span>
+              <span class="ot-meta-val"><span class="badge green">Listo para entrega</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><h3>Cambiar estado</h3></div>
+          <div class="status-selector">
+            <button class="status-btn done-btn" onclick="changeStatus(this, 'Recibido')">Recibido</button>
+            <button class="status-btn done-btn" onclick="changeStatus(this, 'En diagnóstico')">Diagnóstico</button>
+            <button class="status-btn done-btn" onclick="changeStatus(this, 'Esperando autorización')">Esp. autorización</button>
+            <button class="status-btn done-btn" onclick="changeStatus(this, 'Esperando repuestos')">Esp. repuestos</button>
+            <button class="status-btn done-btn" onclick="changeStatus(this, 'En ejecución')">En ejecución</button>
+            <button class="status-btn done-btn" onclick="changeStatus(this, 'Control de calidad')">Calidad</button>
+            <button class="status-btn active-btn" onclick="changeStatus(this, 'Listo para entrega')">Listo entrega</button>
+            <button class="status-btn" onclick="changeStatus(this, 'Cerrado')">Cerrado</button>
+          </div>
+          <div id="statusMsg" class="info-box blue" style="margin-top:12px;display:none"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Historial de eventos</h3></div>
+        <div class="timeline">
+          <div class="tl-item done">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <strong>Vehículo recibido</strong>
+              <p>Roberto Díaz registró la recepción con fotos y firma del conductor.</p>
+              <small>27/06/2026 · 09:14 hrs</small>
+            </div>
+          </div>
+          <div class="tl-item done">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <strong>Diagnóstico iniciado</strong>
+              <p>Jorge Pizarro comenzó la revisión. Escáner conectado, lectura de códigos.</p>
+              <small>27/06/2026 · 10:30 hrs</small>
+            </div>
+          </div>
+          <div class="tl-item done">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <strong>Diagnóstico completado</strong>
+              <p>2 trabajos confirmados, 1 sospechado. Fotos cargadas. Cotización generada.</p>
+              <small>27/06/2026 · 14:15 hrs</small>
+            </div>
+          </div>
+          <div class="tl-item done">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <strong>Cotización enviada al cliente</strong>
+              <p>Enviada por correo a Carlos Fuentes — Transportes del Sur. Total: $310.000</p>
+              <small>27/06/2026 · 14:40 hrs</small>
+            </div>
+          </div>
+          <div class="tl-item done">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <strong>Cotización aprobada</strong>
+              <p>Carlos Fuentes aprobó digitalmente. Trabajo autorizado. Orden en ejecución.</p>
+              <small>28/06/2026 · 09:05 hrs</small>
+            </div>
+          </div>
+          <div class="tl-item done">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <strong>Trabajos ejecutados</strong>
+              <p>Pastillas y discos traseros reemplazados. Prueba de ruta realizada.</p>
+              <small>28/06/2026 · 16:20 hrs</small>
+            </div>
+          </div>
+          <div class="tl-item current">
+            <div class="tl-dot"></div>
+            <div class="tl-body">
+              <strong>Control de calidad aprobado</strong>
+              <p>Checklist completado. Fotos finales cargadas. Listo para entregar.</p>
+              <small>29/06/2026 · 08:50 hrs</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ DIAGNÓSTICO TÉCNICO -->
+  <section id="diagnostico" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Diagnóstico Técnico</h2>
+        <p>El diagnóstico separa lo confirmado de lo sospechado para evitar cotizaciones poco claras y gestionar expectativas con el cliente.</p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="section-tag-label confirmed">
+          <span class="tag-dot green"></span>
+          Trabajos confirmados
+        </div>
+        <div class="diag-card confirmed-card">
+          <div class="diag-header">
+            <strong>Pastillas y discos de frenos traseros</strong>
+            <span class="badge green">Confirmado</span>
+          </div>
+          <p>Disco con ranuras de desgaste sobre 60%. Pastillas con menos de 2mm de material. Riesgo inmediato de pérdida de frenado.</p>
+          <div class="diag-row">
+            <div class="diag-photo">🖼️ <small>3 fotos</small></div>
+            <div>
+              <div class="diag-risk red">⚠️ Riesgo: Falla de frenos en ruta con carga</div>
+              <div class="diag-auth">🔒 Requiere autorización: <strong>Sí</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="diag-card confirmed-card" style="margin-top:12px">
+          <div class="diag-header">
+            <strong>Aceite motor 15W-40 — 5.000 km vencido</strong>
+            <span class="badge green">Confirmado</span>
+          </div>
+          <p>Aceite oscuro con material particulado. Plan de mantenimiento vencido hace 5.000 km según cartola del vehículo.</p>
+          <div class="diag-row">
+            <div class="diag-photo">🖼️ <small>1 foto</small></div>
+            <div>
+              <div class="diag-risk amber">⚠️ Riesgo: Desgaste prematuro de motor</div>
+              <div class="diag-auth">✅ Requiere autorización: Incluido en mantención</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-tag-label suspected">
+          <span class="tag-dot amber"></span>
+          Trabajos sospechados / Por validar
+        </div>
+        <div class="diag-card suspected-card">
+          <div class="diag-header">
+            <strong>Bomba de dirección hidráulica</strong>
+            <span class="badge amber">Por confirmar</span>
+          </div>
+          <p>Posible falla en bomba. Vibración leve detectada en prueba. Requiere prueba adicional en ruta y diagnóstico de cañerías antes de cotizar.</p>
+          <div class="diag-row">
+            <div class="diag-photo">🖼️ <small>0 fotos</small></div>
+            <div>
+              <div class="diag-risk amber">⚠️ Riesgo: Pérdida de asistencia en dirección</div>
+              <div class="diag-auth">⏳ Estado: Validando — No cotizado aún</div>
+            </div>
+          </div>
+          <div class="info-box amber" style="margin-top:10px">
+            Este trabajo no se cotiza ni ejecuta hasta confirmar diagnóstico con evidencia fotográfica. Cliente notificado.
+          </div>
+        </div>
+
+        <div class="card value-card" style="margin-top:16px">
+          <div class="value-icon">💡</div>
+          <p>Separar confirmados de sospechados evita cotizaciones infladas, clientes sorprendidos y trabajos sin respaldo.</p>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="card-header"><h3>Evidencia del diagnóstico</h3></div>
+          <div class="photo-grid">
+            <div class="photo-box has-photo"><span class="photo-label">Disco trasero</span><div class="photo-thumb">🔵</div></div>
+            <div class="photo-box has-photo"><span class="photo-label">Pastilla derecha</span><div class="photo-thumb">🔵</div></div>
+            <div class="photo-box has-photo"><span class="photo-label">Aceite motor</span><div class="photo-thumb">⚫</div></div>
+            <div class="photo-box add"><span class="photo-label">+ Agregar</span><div class="photo-thumb">📷</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑥ COTIZACIÓN Y AUTORIZACIÓN -->
+  <section id="cotizacion" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Cotización y Autorización</h2>
+        <p>Todo trabajo adicional requiere evidencia, cotización y autorización antes de ejecutarse.</p>
+      </div>
+      <span class="badge green">Aprobada</span>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-header">
+          <h3>Detalle de cotización</h3>
+          <span class="tag">COT-0042</span>
+        </div>
+        <div class="cot-table">
+          <div class="cot-header">
+            <span>Descripción</span>
+            <span>Tipo</span>
+            <span>Valor</span>
+          </div>
+          <div class="cot-row">
+            <span>Discos frenos traseros (par)</span>
+            <span><span class="tag">Repuesto</span></span>
+            <span>$85.000</span>
+          </div>
+          <div class="cot-row">
+            <span>Pastillas frenos traseros (kit)</span>
+            <span><span class="tag">Repuesto</span></span>
+            <span>$32.000</span>
+          </div>
+          <div class="cot-row">
+            <span>Cambio aceite 15W-40 5L</span>
+            <span><span class="tag">Insumo</span></span>
+            <span>$28.000</span>
+          </div>
+          <div class="cot-row">
+            <span>Filtro aceite</span>
+            <span><span class="tag">Repuesto</span></span>
+            <span>$12.000</span>
+          </div>
+          <div class="cot-row">
+            <span>Mano de obra — Sistema frenos</span>
+            <span><span class="tag">M.O.</span></span>
+            <span>$85.000</span>
+          </div>
+          <div class="cot-row">
+            <span>Mano de obra — Cambio aceite</span>
+            <span><span class="tag">M.O.</span></span>
+            <span>$18.000</span>
+          </div>
+          <div class="cot-row">
+            <span>Prueba de ruta</span>
+            <span><span class="tag">Servicio</span></span>
+            <span>$15.000</span>
+          </div>
+          <div class="cot-row">
+            <span>Traslado urgente repuestos</span>
+            <span><span class="tag">Gasto adicional</span></span>
+            <span>$8.000</span>
+          </div>
+          <div class="cot-total">
+            <span>Total estimado (IVA incluido)</span>
+            <span>$310.000</span>
+          </div>
+          <div class="cot-vigencia">Vigencia de cotización: 5 días hábiles — Hasta 04/07/2026</div>
+        </div>
+
+        <div class="cot-buttons">
+          <button class="btn-primary" onclick="openModal('modalCot')">✅ Aprobar cotización</button>
+          <button class="btn-ghost" onclick="showToast('Solicitud enviada al taller')">✏️ Solicitar ajuste</button>
+          <button class="btn-danger" onclick="showToast('Cotización rechazada — Taller notificado')">✖ Rechazar</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header"><h3>Respaldo formal</h3></div>
+          <div class="info-box green">
+            ✅ <strong>Aprobación digital registrada</strong><br>
+            Carlos Fuentes — Transportes del Sur SpA<br>
+            28/06/2026 · 09:05 hrs — IP: 186.x.x.x<br>
+            Notificación enviada a: carlos.fuentes@transportesdelsur.cl
+          </div>
+          <div class="approval-items">
+            <div class="approval-item"><span class="ai-icon green">✓</span> Aprobación digital</div>
+            <div class="approval-item"><span class="ai-icon green">✓</span> Respaldo por correo electrónico</div>
+            <div class="approval-item"><span class="ai-icon green">✓</span> Fecha, hora y responsable registrado</div>
+            <div class="approval-item"><span class="ai-icon green">✓</span> Orden de trabajo activada</div>
+          </div>
+        </div>
+
+        <div class="card value-card" style="margin-top:16px">
+          <div class="value-icon">💡</div>
+          <p>Ningún trabajo adicional se ejecuta sin aprobación formal. Esto protege al taller y da seguridad al cliente.</p>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="card-header"><h3>Historial de autorizaciones</h3></div>
+          <div class="auth-history">
+            <div class="ah-row">
+              <div>
+                <strong>COT-0042 aprobada</strong>
+                <p>Frenos + cambio aceite · $310.000</p>
+              </div>
+              <span class="badge green">Aprobada</span>
+            </div>
+            <div class="ah-row">
+              <div>
+                <strong>COT-0041 aprobada</strong>
+                <p>Afinación motor · $185.000</p>
+              </div>
+              <span class="badge green">Aprobada</span>
+            </div>
+            <div class="ah-row">
+              <div>
+                <strong>COT-0040 rechazada</strong>
+                <p>Pintura lateral · $320.000</p>
+              </div>
+              <span class="badge red">Rechazada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑦ CONTROL DE GASTOS POR OT -->
+  <section id="costos" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Control de Gastos por OT</h2>
+        <p>Cada gasto queda vinculado a una orden de trabajo para evitar pérdidas invisibles.</p>
+      </div>
+      <button class="btn-ghost sm" onclick="showToast('Formulario de gasto abierto')">+ Registrar gasto</button>
+    </div>
+
+    <div class="kpi-row">
+      <div class="mini-kpi">
+        <div class="kpi-num">$310.000</div>
+        <div class="kpi-lbl">Cotizado OT-0042</div>
+      </div>
+      <div class="mini-kpi">
+        <div class="kpi-num">$287.500</div>
+        <div class="kpi-lbl">Gasto real registrado</div>
+      </div>
+      <div class="mini-kpi green-kpi">
+        <div class="kpi-num">$22.500</div>
+        <div class="kpi-lbl">Diferencia favorable</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-header">
+        <h3>Detalle de gastos — OT-0042</h3>
+        <div class="filter-row">
+          <select class="filter-select" onchange="filterCostos(this.value)">
+            <option value="todos">Todos los estados</option>
+            <option value="rendido">Rendidos</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="facturable">Facturables</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="costosTable">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Proveedor</th>
+              <th>Ítem</th>
+              <th>Valor</th>
+              <th>Fecha</th>
+              <th>Responsable</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-estado="rendido">
+              <td>Repuesto</td>
+              <td>AutoPartes Central</td>
+              <td>Discos frenos (par)</td>
+              <td>$78.000</td>
+              <td>27/06</td>
+              <td>J. Pizarro</td>
+              <td><span class="badge green">Rendido</span></td>
+            </tr>
+            <tr data-estado="rendido">
+              <td>Repuesto</td>
+              <td>AutoPartes Central</td>
+              <td>Pastillas frenos (kit)</td>
+              <td>$29.500</td>
+              <td>27/06</td>
+              <td>J. Pizarro</td>
+              <td><span class="badge green">Rendido</span></td>
+            </tr>
+            <tr data-estado="rendido">
+              <td>Insumo</td>
+              <td>Lubrimax</td>
+              <td>Aceite 15W-40 5L</td>
+              <td>$24.000</td>
+              <td>27/06</td>
+              <td>R. Díaz</td>
+              <td><span class="badge green">Rendido</span></td>
+            </tr>
+            <tr data-estado="rendido">
+              <td>Repuesto</td>
+              <td>Lubrimax</td>
+              <td>Filtro aceite</td>
+              <td>$11.000</td>
+              <td>27/06</td>
+              <td>R. Díaz</td>
+              <td><span class="badge green">Rendido</span></td>
+            </tr>
+            <tr data-estado="facturable">
+              <td>Mano de obra</td>
+              <td>Interno</td>
+              <td>Sistema frenos</td>
+              <td>$85.000</td>
+              <td>28/06</td>
+              <td>J. Pizarro</td>
+              <td><span class="badge blue">Facturable</span></td>
+            </tr>
+            <tr data-estado="facturable">
+              <td>Mano de obra</td>
+              <td>Interno</td>
+              <td>Cambio aceite</td>
+              <td>$18.000</td>
+              <td>28/06</td>
+              <td>J. Pizarro</td>
+              <td><span class="badge blue">Facturable</span></td>
+            </tr>
+            <tr data-estado="pendiente">
+              <td>Gasto adicional</td>
+              <td>Fletes Rápido</td>
+              <td>Traslado urgente repuestos</td>
+              <td>$8.000</td>
+              <td>28/06</td>
+              <td>R. Díaz</td>
+              <td><span class="badge amber">Pendiente</span></td>
+            </tr>
+            <tr data-estado="facturable">
+              <td>Servicio</td>
+              <td>Interno</td>
+              <td>Prueba de ruta</td>
+              <td>$15.000</td>
+              <td>29/06</td>
+              <td>J. Pizarro</td>
+              <td><span class="badge blue">Facturable</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        Total registrado: <strong>$268.500</strong> · 1 gasto pendiente de rendición · <span class="link-action" onclick="showToast('Exportando resumen de OT-0042...')">Exportar detalle</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑧ HISTORIAL DE PROVEEDORES -->
+  <section id="proveedores" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Historial de Proveedores</h2>
+        <p>El historial de proveedores permite presupuestar con precios reales y evitar pérdidas por valores desactualizados.</p>
+      </div>
+      <div class="filter-row">
+        <input type="text" class="search-input" placeholder="Buscar proveedor o repuesto..." oninput="filterProveedores(this.value)" />
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:0">
+      <div class="table-wrap">
+        <table id="provTable">
+          <thead>
+            <tr>
+              <th>Proveedor</th>
+              <th>Repuesto / Insumo</th>
+              <th>OT</th>
+              <th>Fecha</th>
+              <th>Último precio</th>
+              <th>Precio anterior</th>
+              <th>Variación</th>
+              <th>Observación</th>
+            </tr>
+          </thead>
+          <tbody id="provBody">
+            <tr>
+              <td><strong>AutoPartes Central</strong></td>
+              <td>Discos frenos traseros (par) Toyota Hilux</td>
+              <td>OT-0042</td>
+              <td>27/06/2026</td>
+              <td>$78.000</td>
+              <td>$74.000</td>
+              <td><span class="badge red">+5.4%</span></td>
+              <td>Alza por tipo de cambio</td>
+            </tr>
+            <tr>
+              <td><strong>AutoPartes Central</strong></td>
+              <td>Pastillas frenos traseras Toyota Hilux</td>
+              <td>OT-0042</td>
+              <td>27/06/2026</td>
+              <td>$29.500</td>
+              <td>$29.000</td>
+              <td><span class="badge amber">+1.7%</span></td>
+              <td>Mismo proveedor, precio estable</td>
+            </tr>
+            <tr>
+              <td><strong>Lubrimax</strong></td>
+              <td>Aceite motor 15W-40 Mobil 5L</td>
+              <td>OT-0042</td>
+              <td>27/06/2026</td>
+              <td>$24.000</td>
+              <td>$26.500</td>
+              <td><span class="badge green">-9.4%</span></td>
+              <td>Negociación por volumen mes</td>
+            </tr>
+            <tr>
+              <td><strong>Lubrimax</strong></td>
+              <td>Filtro aceite Toyota Hilux</td>
+              <td>OT-0042</td>
+              <td>27/06/2026</td>
+              <td>$11.000</td>
+              <td>$11.000</td>
+              <td><span class="badge blue">0%</span></td>
+              <td>Precio sin variación</td>
+            </tr>
+            <tr>
+              <td><strong>Importadora Sur</strong></td>
+              <td>Sensor ABS delantero Nissan Frontier</td>
+              <td>OT-0039</td>
+              <td>20/06/2026</td>
+              <td>$45.000</td>
+              <td>$38.000</td>
+              <td><span class="badge red">+18.4%</span></td>
+              <td>Importado. Demoró 3 días. Evaluar alternativa.</td>
+            </tr>
+            <tr>
+              <td><strong>FastParts</strong></td>
+              <td>Bomba de agua Chevrolet NPR</td>
+              <td>OT-0036</td>
+              <td>12/06/2026</td>
+              <td>$92.000</td>
+              <td>$89.000</td>
+              <td><span class="badge amber">+3.4%</span></td>
+              <td>Disponible en 24h. Calidad OEM.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card value-card" style="margin-top:16px">
+      <div class="value-icon">💡</div>
+      <p>Con historial real de compras puedes negociar mejor, detectar alzas de precio y comparar alternativas antes de cotizar.</p>
+    </div>
+  </section>
+
+  <!-- ⑨ EVIDENCIA FOTOGRÁFICA -->
+  <section id="evidencia" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Evidencia Fotográfica</h2>
+        <p>Registro visual completo por etapa del trabajo</p>
+      </div>
+      <span class="tag blue">OT-0042</span>
+    </div>
+
+    <div class="evid-tabs">
+      <button class="etab active" onclick="switchEvid(this, 'evid-recepcion')">Recepción</button>
+      <button class="etab" onclick="switchEvid(this, 'evid-diagnostico')">Diagnóstico</button>
+      <button class="etab" onclick="switchEvid(this, 'evid-repuestos')">Repuestos</button>
+      <button class="etab" onclick="switchEvid(this, 'evid-instalacion')">Instalación</button>
+      <button class="etab" onclick="switchEvid(this, 'evid-finales')">Fotos finales</button>
+    </div>
+
+    <div id="evid-recepcion" class="evid-panel">
+      <div class="photo-grid-lg">
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🚗</div><span>Frente</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🚗</div><span>Lateral der.</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🚗</div><span>Lateral izq.</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🚗</div><span>Trasero</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🪑</div><span>Interior</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🚧</div><span>Daño preexistente</span></div>
+      </div>
+      <div class="evid-meta">📅 27/06/2026 · 09:14 hrs · Registrado por Roberto Díaz</div>
+    </div>
+
+    <div id="evid-diagnostico" class="evid-panel" style="display:none">
+      <div class="photo-grid-lg">
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🔵</div><span>Disco trasero</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🔵</div><span>Pastilla desgastada</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">⚫</div><span>Aceite motor</span></div>
+        <div class="photo-box-lg add"><div class="photo-inner">📷</div><span>+ Agregar</span></div>
+      </div>
+      <div class="evid-meta">📅 27/06/2026 · 14:10 hrs · Registrado por Jorge Pizarro</div>
+    </div>
+
+    <div id="evid-repuestos" class="evid-panel" style="display:none">
+      <div class="photo-grid-lg">
+        <div class="photo-box-lg has-photo"><div class="photo-inner">📦</div><span>Discos nuevos</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">📦</div><span>Kit pastillas</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">📦</div><span>Repuesto usado retirado</span></div>
+        <div class="photo-box-lg add"><div class="photo-inner">📷</div><span>+ Agregar</span></div>
+      </div>
+      <div class="evid-meta">📅 27/06/2026 · 16:00 hrs · Registrado por Jorge Pizarro</div>
+    </div>
+
+    <div id="evid-instalacion" class="evid-panel" style="display:none">
+      <div class="photo-grid-lg">
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🔧</div><span>Instalación discos</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🔧</div><span>Pastillas montadas</span></div>
+        <div class="photo-box-lg add"><div class="photo-inner">📷</div><span>+ Agregar</span></div>
+      </div>
+      <div class="evid-meta">📅 28/06/2026 · 14:30 hrs · Registrado por Jorge Pizarro</div>
+    </div>
+
+    <div id="evid-finales" class="evid-panel" style="display:none">
+      <div class="photo-grid-lg">
+        <div class="photo-box-lg has-photo"><div class="photo-inner">✅</div><span>Trabajo terminado</span></div>
+        <div class="photo-box-lg has-photo"><div class="photo-inner">🚗</div><span>Estado final</span></div>
+        <div class="photo-box-lg add"><div class="photo-inner">📷</div><span>+ Agregar</span></div>
+      </div>
+      <div class="evid-meta">📅 29/06/2026 · 08:45 hrs · Registrado por Roberto Díaz</div>
+    </div>
+
+    <div class="card value-card" style="margin-top:20px">
+      <div class="value-icon">⚙️</div>
+      <p><strong>Configuración del sistema:</strong> Evidencia fotográfica a cargo del mecánico asignado. El jefe de patio valida antes del cierre.</p>
+    </div>
+  </section>
+
+  <!-- ⑩ CONTROL DE CALIDAD -->
+  <section id="calidad" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Control de Calidad</h2>
+        <p>El cierre técnico exige evidencia y checklist antes de entregar el vehículo.</p>
+      </div>
+      <span class="badge green">Aprobado</span>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-header"><h3>Checklist de calidad — OT-0042</h3></div>
+        <div class="checklist">
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div class="check-text">
+              <strong>Trabajo ejecutado según OT</strong>
+              <small>Verificado contra cotización aprobada COT-0042</small>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div class="check-text">
+              <strong>Repuestos instalados verificados</strong>
+              <small>Fotos de repuestos nuevos y usados retirados cargadas</small>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div class="check-text">
+              <strong>Niveles revisados</strong>
+              <small>Aceite, frenos, refrigerante, dirección OK</small>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div class="check-text">
+              <strong>Prueba estática realizada</strong>
+              <small>Frenado en patio sin anomalías</small>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div class="check-text">
+              <strong>Prueba de ruta realizada</strong>
+              <small>4.2 km · Sin ruidos ni vibraciones · Frenado suave</small>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div class="check-text">
+              <strong>Fotos finales cargadas</strong>
+              <small>Estado del vehículo antes de entrega documentado</small>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div class="check-text">
+              <strong>Observaciones registradas</strong>
+              <small>Sin observaciones adicionales. Trabajo completado.</small>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div class="check-text">
+              <strong>Aprobación del encargado</strong>
+              <small>Roberto Díaz · 29/06/2026 · 08:50 hrs</small>
+            </div>
+          </div>
+        </div>
+        <div class="info-box green" style="margin-top:16px">
+          ✅ <strong>Calidad aprobada</strong> — Vehículo autorizado para entrega. Sin observaciones.
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header"><h3>Prueba de ruta</h3></div>
+          <div class="ruta-data">
+            <div class="ruta-item"><span class="ruta-label">Conductor</span><span>Jorge Pizarro</span></div>
+            <div class="ruta-item"><span class="ruta-label">Distancia</span><span>4.2 km</span></div>
+            <div class="ruta-item"><span class="ruta-label">Duración</span><span>12 minutos</span></div>
+            <div class="ruta-item"><span class="ruta-label">Velocidad máx.</span><span>68 km/h</span></div>
+            <div class="ruta-item"><span class="ruta-label">Frenadas</span><span>8 · Sin anomalías</span></div>
+            <div class="ruta-item"><span class="ruta-label">Resultado</span><span class="badge green">Aprobado</span></div>
+          </div>
+        </div>
+
+        <div class="card value-card" style="margin-top:16px">
+          <div class="value-icon">💡</div>
+          <p>Sin checklist completo y prueba de ruta aprobada, el sistema no permite avanzar a entrega.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑪ ENTREGA Y GARANTÍA -->
+  <section id="entrega" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Entrega y Garantía</h2>
+        <p>Cierre formal con trazabilidad de salida y seguimiento post entrega</p>
+      </div>
+      <span class="badge green">Lista para entrega</span>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-header"><h3>Datos de entrega — OT-0042</h3></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Kilometraje de salida</label>
+            <input type="text" value="79.897 km" readonly />
+          </div>
+          <div class="form-group">
+            <label>Combustible de salida</label>
+            <input type="text" value="3/4 del estanque (igual al ingreso)" readonly />
+          </div>
+          <div class="form-group cols-full">
+            <label>Observaciones de entrega</label>
+            <textarea readonly>Sistema de frenos funcionando correctamente. Se recomendó próximo mantenimiento en 10.000 km (aprox. 3 meses). Se informó al conductor sobre período de rodaje inicial de 300 km para los nuevos discos.</textarea>
+          </div>
+        </div>
+
+        <div class="card-header" style="margin-top:20px"><h3>Garantía técnica</h3></div>
+        <div class="garantia-box">
+          <div class="gar-item">
+            <span class="gar-icon">🛡️</span>
+            <div>
+              <strong>Garantía de 30 días</strong>
+              <p>Sobre trabajos ejecutados y repuestos instalados</p>
+            </div>
+          </div>
+          <div class="gar-item">
+            <span class="gar-icon">📞</span>
+            <div>
+              <strong>Seguimiento a las 72 horas</strong>
+              <p>Contacto automático para confirmar satisfacción</p>
+            </div>
+          </div>
+          <div class="gar-item">
+            <span class="gar-icon">📋</span>
+            <div>
+              <strong>Firma de entrega</strong>
+              <p>Carlos Fuentes · Transportes del Sur SpA</p>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" style="width:100%;margin-top:16px;justify-content:center" onclick="showToast('Entrega registrada. Seguimiento 72h programado.')">
+          Registrar entrega y cerrar OT
+        </button>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header"><h3>Estado de satisfacción</h3></div>
+          <div class="sat-options">
+            <div class="sat-opt selected" onclick="selectSat(this)">
+              <div class="sat-icon">😊</div>
+              <div class="sat-text">Satisfecho</div>
+            </div>
+            <div class="sat-opt" onclick="selectSat(this)">
+              <div class="sat-icon">😐</div>
+              <div class="sat-text">Neutral</div>
+            </div>
+            <div class="sat-opt" onclick="selectSat(this)">
+              <div class="sat-icon">😞</div>
+              <div class="sat-text">Insatisfecho</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><h3>Próximo mantenimiento</h3></div>
+          <div class="prox-mant">
+            <div class="pm-item">
+              <span class="pm-label">Tipo</span>
+              <span>Mantenimiento preventivo 90.000 km</span>
+            </div>
+            <div class="pm-item">
+              <span class="pm-label">Vehículo</span>
+              <span>PPB-1234 · Toyota Hilux</span>
+            </div>
+            <div class="pm-item">
+              <span class="pm-label">Fecha estimada</span>
+              <span>Septiembre 2026 (aprox.)</span>
+            </div>
+            <div class="pm-item">
+              <span class="pm-label">Alerta</span>
+              <span class="badge blue">Automática 30 días antes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑫ PORTAL CLIENTE -->
+  <section id="portal" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Portal Cliente</h2>
+        <p>Vista restringida para encargado de flota — Solo lo necesario para seguimiento y aprobación</p>
+      </div>
+      <div class="portal-user">
+        <div class="pu-avatar">CF</div>
+        <div>
+          <strong>Carlos Fuentes</strong>
+          <small>Jefe de Flota · Transportes del Sur</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-tabs">
+      <button class="ptab active" onclick="switchPortal(this, 'pv-vehiculos')">Mis vehículos</button>
+      <button class="ptab" onclick="switchPortal(this, 'pv-cotizaciones')">Cotizaciones</button>
+      <button class="ptab" onclick="switchPortal(this, 'pv-historial')">Historial</button>
+    </div>
+
+    <div id="pv-vehiculos" class="portal-panel">
+      <div class="portal-cards">
+        <div class="portal-card">
+          <div class="pc-top">
+            <div>
+              <div class="pc-patente">PPB-1234</div>
+              <div class="pc-modelo">Toyota Hilux 4x4</div>
+            </div>
+            <span class="badge green">Listo para entrega</span>
+          </div>
+          <div class="pc-info">
+            <span>OT-0042</span>
+            <span>·</span>
+            <span>Frenos + cambio aceite</span>
+          </div>
+          <div class="pc-meta">📅 Entrega: 29/06/2026 · Hoy a las 16:00 hrs</div>
+          <div class="pc-actions">
+            <button class="btn-ghost sm" onclick="goSection('evidencia')">Ver evidencia</button>
+            <button class="btn-ghost sm" onclick="showToast('Abriendo historial del vehículo...')">Ver historial</button>
+          </div>
+        </div>
+
+        <div class="portal-card">
+          <div class="pc-top">
+            <div>
+              <div class="pc-patente">KLM-8891</div>
+              <div class="pc-modelo">Chevrolet NPR</div>
+            </div>
+            <span class="badge amber">En diagnóstico</span>
+          </div>
+          <div class="pc-info">
+            <span>OT-0043</span>
+            <span>·</span>
+            <span>Falla sistema frenos</span>
+          </div>
+          <div class="pc-meta">⏱ Diagnóstico en curso · Estimado: 30/06/2026</div>
+          <div class="pc-actions">
+            <button class="btn-ghost sm" onclick="showToast('Cargando avance del diagnóstico...')">Ver avance</button>
+          </div>
+        </div>
+
+        <div class="portal-card highlight-card">
+          <div class="pc-top">
+            <div>
+              <div class="pc-patente">GHJ-5521</div>
+              <div class="pc-modelo">Nissan Frontier</div>
+            </div>
+            <span class="badge blue">Esperando tu autorización</span>
+          </div>
+          <div class="pc-info">
+            <span>OT-0044</span>
+            <span>·</span>
+            <span>Cotización lista — $285.000</span>
+          </div>
+          <div class="pc-meta">⚠️ Sin autorización no se puede continuar</div>
+          <div class="pc-actions">
+            <button class="btn-primary sm" onclick="openModal('modalCot')">Revisar y aprobar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pv-cotizaciones" class="portal-panel" style="display:none">
+      <div class="card">
+        <div class="card-header"><h3>Cotizaciones pendientes</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>OT</th><th>Vehículo</th><th>Trabajo</th><th>Monto</th><th>Vigencia</th><th>Acción</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>OT-0044</td>
+                <td>GHJ-5521 · Nissan Frontier</td>
+                <td>Dirección hidráulica</td>
+                <td><strong>$285.000</strong></td>
+                <td>04/07/2026</td>
+                <td><button class="btn-primary sm" onclick="openModal('modalCot')">Aprobar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="pv-historial" class="portal-panel" style="display:none">
+      <div class="card">
+        <div class="card-header"><h3>Historial de trabajos</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Fecha</th><th>OT</th><th>Vehículo</th><th>Trabajo</th><th>Total</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jun 2026</td>
+                <td>OT-0042</td>
+                <td>PPB-1234</td>
+                <td>Frenos + aceite</td>
+                <td>$310.000</td>
+                <td><span class="badge green">Cerrado</span></td>
+              </tr>
+              <tr>
+                <td>May 2026</td>
+                <td>OT-0039</td>
+                <td>GHJ-5521</td>
+                <td>Sensor ABS</td>
+                <td>$125.000</td>
+                <td><span class="badge green">Cerrado</span></td>
+              </tr>
+              <tr>
+                <td>Abr 2026</td>
+                <td>OT-0033</td>
+                <td>KLM-8891</td>
+                <td>Mantención 60.000 km</td>
+                <td>$245.000</td>
+                <td><span class="badge green">Cerrado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑬ CONFIGURACIÓN DEL TALLER -->
+  <section id="config" class="section">
+    <div class="section-header">
+      <div>
+        <h2>Configuración del Taller</h2>
+        <p>Parámetros y roles para adaptar el flujo a tu operación</p>
+      </div>
+    </div>
+
+    <div class="config-grid">
+      <div class="card">
+        <div class="card-header"><h3>Usuarios y roles</h3></div>
+        <div class="role-list">
+          <div class="role-item">
+            <div class="role-avatar">JD</div>
+            <div class="role-info">
+              <strong>Juan Díaz</strong>
+              <small>Jefe de taller · Acceso completo</small>
+            </div>
+            <span class="badge blue">Admin</span>
+          </div>
+          <div class="role-item">
+            <div class="role-avatar">JP</div>
+            <div class="role-info">
+              <strong>Jorge Pizarro</strong>
+              <small>Mecánico · OT asignadas</small>
+            </div>
+            <span class="badge purple">Mecánico</span>
+          </div>
+          <div class="role-item">
+            <div class="role-avatar">RD</div>
+            <div class="role-info">
+              <strong>Roberto Díaz</strong>
+              <small>Jefe de patio · Recepción + calidad</small>
+            </div>
+            <span class="badge amber">Patio</span>
+          </div>
+          <div class="role-item">
+            <div class="role-avatar">CF</div>
+            <div class="role-info">
+              <strong>Carlos Fuentes</strong>
+              <small>Cliente · Portal restringido</small>
+            </div>
+            <span class="badge green">Cliente</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Parámetros operacionales</h3></div>
+        <div class="param-list">
+          <div class="param-item">
+            <span class="param-label">Capacidad diaria del taller</span>
+            <span class="param-val">8 OTs simultáneas</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">SLA estándar por cliente</span>
+            <span class="param-val">48 horas hábiles</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Plazo de respuesta cotización</span>
+            <span class="param-val">24 horas</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Vigencia de cotizaciones</span>
+            <span class="param-val">5 días hábiles</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Garantía técnica estándar</span>
+            <span class="param-val">30 días</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Seguimiento post entrega</span>
+            <span class="param-val">Automático 72 horas</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Responsable de evidencia</span>
+            <span class="param-val">Mecánico asignado + validación jefe patio</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Responsable de aprobación</span>
+            <span class="param-val">Jefe de taller</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑭ CIERRE EJECUTIVO -->
+  <section id="cierre" class="section">
+    <div class="closing-hero">
+      <div class="closing-content">
+        <div class="closing-badge">Flujo completo</div>
+        <h2 class="closing-title">Este flujo permite que el taller trabaje con más control, menor pérdida de información y mayor confianza frente a clientes con flotas.</h2>
+        <p class="closing-sub">Recepción formal · Diagnóstico estructurado · Cotizaciones aprobadas · Control de costos · Evidencia completa · Portal para el cliente</p>
+        <div class="closing-btns">
+          <button class="btn-primary xl" onclick="showToast('¡Gracias! Nos contactaremos en breve.')">Solicitar reunión de validación</button>
+          <button class="btn-ghost xl" onclick="goSection('hero')">Revisar flujo completo</button>
+        </div>
+      </div>
+      <div class="closing-features">
+        <div class="cf-item">
+          <span class="cf-icon">📋</span>
+          <div>
+            <strong>Recepción con firma digital</strong>
+            <p>Empresa, conductor, fotos, daños y pertenencias documentadas al ingreso.</p>
+          </div>
+        </div>
+        <div class="cf-item">
+          <span class="cf-icon">🔧</span>
+          <div>
+            <strong>Diagnóstico separado y transparente</strong>
+            <p>Confirmados vs sospechados. Sin cotizaciones infladas ni sorpresas.</p>
+          </div>
+        </div>
+        <div class="cf-item">
+          <span class="cf-icon">💰</span>
+          <div>
+            <strong>Costos vinculados a cada OT</strong>
+            <p>Ningún gasto invisible. Todo asociado a cliente, vehículo y trabajo.</p>
+          </div>
+        </div>
+        <div class="cf-item">
+          <span class="cf-icon">👁️</span>
+          <div>
+            <strong>Portal cliente con visibilidad real</strong>
+            <p>El encargado de flota aprueba, consulta y recibe alertas desde su celular.</p>
+          </div>
+        </div>
+        <div class="cf-item">
+          <span class="cf-icon">🏆</span>
+          <div>
+            <strong>Calidad medible y prueba de ruta</strong>
+            <p>Ningún vehículo sale sin checklist completo y prueba aprobada.</p>
+          </div>
+        </div>
+        <div class="cf-item">
+          <span class="cf-icon">📈</span>
+          <div>
+            <strong>Historial por vehículo y cliente</strong>
+            <p>Trazabilidad total de cada trabajo, gasto y repuesto instalado.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottomnav" id="bottomnav">
+  <button class="bn-btn active" data-section="hero">
+    <span class="bn-icon">🏠</span>
+    <span class="bn-label">Inicio</span>
+  </button>
+  <button class="bn-btn" data-section="recepcion">
+    <span class="bn-icon">📋</span>
+    <span class="bn-label">Recepción</span>
+  </button>
+  <button class="bn-btn" data-section="ot">
+    <span class="bn-icon">🔧</span>
+    <span class="bn-label">OT</span>
+  </button>
+  <button class="bn-btn" data-section="costos">
+    <span class="bn-icon">💰</span>
+    <span class="bn-label">Costos</span>
+  </button>
+  <button class="bn-btn" data-section="portal">
+    <span class="bn-icon">👁️</span>
+    <span class="bn-label">Cliente</span>
+  </button>
+</nav>
+
+<!-- MODAL COTIZACIÓN -->
+<div id="modalCot" class="modal-overlay" style="display:none" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Aprobar cotización</h3>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-summary">
+        <div class="ms-row"><span>Vehículo</span><strong>GHJ-5521 · Nissan Frontier</strong></div>
+        <div class="ms-row"><span>OT</span><strong>OT-0044</strong></div>
+        <div class="ms-row"><span>Trabajo</span><strong>Dirección hidráulica</strong></div>
+        <div class="ms-row"><span>Total</span><strong class="ms-total">$285.000</strong></div>
+      </div>
+      <div class="info-box blue" style="margin:16px 0">
+        Al aprobar, el taller queda autorizado para ejecutar el trabajo. Recibirás confirmación por correo.
+      </div>
+      <div class="modal-btns">
+        <button class="btn-primary" onclick="approveQuote()">✅ Aprobar cotización</button>
+        <button class="btn-ghost" onclick="closeModalDirect()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

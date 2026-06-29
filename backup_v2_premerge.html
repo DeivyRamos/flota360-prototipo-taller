@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flota 360 — Prototipo V2 Post Reunión Alexander</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#111827;
+      --panel2:#162033;
+      --card:#ffffff;
+      --muted:#64748b;
+      --text:#0f172a;
+      --white:#f8fafc;
+      --line:#e2e8f0;
+      --blue:#2563eb;
+      --blue2:#1d4ed8;
+      --amber:#f59e0b;
+      --green:#16a34a;
+      --red:#dc2626;
+      --purple:#7c3aed;
+      --softBlue:#eff6ff;
+      --softAmber:#fffbeb;
+      --softGreen:#f0fdf4;
+      --softRed:#fef2f2;
+      --radius:18px;
+      --shadow:0 16px 40px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:#f3f6fb;
+      color:var(--text);
+    }
+    .app{display:flex; min-height:100vh;}
+    aside{
+      width:305px;
+      background:linear-gradient(180deg,#0f172a,#111827 70%,#172554);
+      color:var(--white);
+      padding:22px;
+      position:fixed;
+      top:0; bottom:0; left:0;
+      overflow:auto;
+    }
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:20px}
+    .logo{
+      width:46px;height:46px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#60a5fa,#22c55e);
+      color:white;font-weight:900;font-size:20px;
+      box-shadow:0 10px 24px rgba(37,99,235,.35)
+    }
+    .brand h1{font-size:18px;margin:0;line-height:1.1}
+    .brand small{display:block;color:#bfdbfe;font-weight:500;margin-top:4px}
+    .prototype-tag{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      color:#dbeafe;
+      border-radius:14px;
+      padding:12px;
+      font-size:12px;
+      line-height:1.45;
+      margin-bottom:18px;
+    }
+    nav{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .navbtn{
+      width:100%; border:0; border-radius:14px; padding:12px 13px;
+      background:transparent;color:#dbeafe;text-align:left;cursor:pointer;
+      display:flex;gap:10px;align-items:center;font-size:14px;
+      transition:.15s ease;
+    }
+    .navbtn:hover{background:rgba(255,255,255,.08)}
+    .navbtn.active{background:white;color:#0f172a;font-weight:800;box-shadow:0 12px 28px rgba(0,0,0,.18)}
+    .navnum{
+      min-width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.13);
+      display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;
+    }
+    .navbtn.active .navnum{background:#dbeafe;color:#1d4ed8}
+    .side-section{margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)}
+    .side-section h3{font-size:12px;color:#93c5fd;text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px}
+    .side-pill{display:flex;gap:8px;flex-direction:column;font-size:12px;color:#dbeafe}
+    .side-pill span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:9px;border-radius:12px}
+    main{margin-left:305px;width:calc(100% - 305px);padding:24px 28px 40px}
+    .topbar{
+      display:flex;justify-content:space-between;gap:16px;align-items:flex-start;
+      background:white;border:1px solid var(--line);box-shadow:var(--shadow);
+      border-radius:22px;padding:20px;margin-bottom:20px;position:sticky;top:14px;z-index:10;
+    }
+    .page-title h2{margin:0;font-size:25px;letter-spacing:-.03em}
+    .page-title p{margin:6px 0 0;color:var(--muted);max-width:850px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    button,.btn{
+      border:0;border-radius:13px;padding:11px 14px;font-weight:800;cursor:pointer;
+      display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:.15s ease;
+    }
+    .primary{background:var(--blue);color:white}
+    .primary:hover{background:var(--blue2)}
+    .ghost{background:#f1f5f9;color:#0f172a;border:1px solid #e2e8f0}
+    .danger{background:var(--red);color:white}
+    .success{background:var(--green);color:white}
+    .section{display:none;animation:fade .2s ease}
+    .section.active{display:block}
+    @keyframes fade{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+    .grid{display:grid;gap:16px}
+    .cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .card{
+      background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:18px;min-width:0;
+    }
+    .card h3{margin:0 0 8px;font-size:18px;letter-spacing:-.02em}
+    .card p{color:#475569;line-height:1.55;margin:0 0 12px}
+    .metric{display:flex;flex-direction:column;gap:5px;min-height:132px}
+    .metric .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}
+    .metric .value{font-size:29px;font-weight:950;letter-spacing:-.04em}
+    .metric .note{font-size:13px;color:#64748b;line-height:1.35}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:900;white-space:nowrap}
+    .badge.blue{background:#dbeafe;color:#1d4ed8}
+    .badge.amber{background:#fef3c7;color:#92400e}
+    .badge.green{background:#dcfce7;color:#166534}
+    .badge.red{background:#fee2e2;color:#991b1b}
+    .badge.purple{background:#ede9fe;color:#5b21b6}
+    .split{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;align-items:start}
+    .pipeline{display:flex;gap:10px;overflow:auto;padding:10px 0 2px}
+    .step{min-width:170px;background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:12px}
+    .step strong{display:block;margin-bottom:5px;font-size:14px}
+    .step small{color:#64748b;line-height:1.35;display:block}
+    .step.done{background:var(--softGreen);border-color:#bbf7d0}
+    .step.current{background:var(--softBlue);border-color:#bfdbfe;box-shadow:inset 0 0 0 2px #dbeafe}
+    .step.blocked{background:var(--softRed);border-color:#fecaca}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}
+    table{width:100%;border-collapse:collapse;background:white;font-size:14px}
+    th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:#f8fafc;color:#334155;font-size:12px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+    tr:last-child td{border-bottom:0}
+    .sticky-demo{background:#0f172a;color:white;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:sticky;top:128px}
+    .sticky-demo h3{margin:0 0 8px}
+    .sticky-demo p{color:#dbeafe;line-height:1.55}
+    .prompt{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:12px;margin-top:12px;color:#e0f2fe;font-size:13px;line-height:1.45}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+    label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-weight:900;color:#475569;margin-bottom:6px}
+    input,textarea,select{
+      width:100%;border:1px solid #cbd5e1;border-radius:13px;padding:11px 12px;font:inherit;background:white;color:#0f172a;
+    }
+    textarea{min-height:88px;resize:vertical}
+    .validation-box{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:16px;padding:14px;margin-top:14px}
+    .validation-box h4{margin:0 0 7px}
+    .validation-box ul{margin:0;padding-left:18px;color:#475569;line-height:1.55}
+    .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .photo-placeholder{height:88px;border-radius:14px;border:1px dashed #94a3b8;background:#f8fafc;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:24px;position:relative;overflow:hidden}
+    .photo-placeholder small{position:absolute;bottom:7px;left:8px;right:8px;font-size:10px;text-align:center;color:#64748b}
+    .alert,.risk,.ok,.info{
+      border-radius:16px;padding:13px 14px;line-height:1.45;font-size:14px;
+    }
+    .alert{background:var(--softAmber);border:1px solid #fde68a;color:#78350f}
+    .risk{background:var(--softRed);border:1px solid #fecaca;color:#7f1d1d}
+    .ok{background:var(--softGreen);border:1px solid #bbf7d0;color:#14532d}
+    .info{background:var(--softBlue);border:1px solid #bfdbfe;color:#1e3a8a}
+    .status-card{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:13px;margin-top:10px}
+    .status-card h4{margin:0 0 3px;font-size:14px}
+    .status-card p{margin:0;color:#64748b;font-size:13px;line-height:1.38}
+    .phone{max-width:390px;width:100%;margin:0 auto;background:#0f172a;border-radius:34px;padding:12px;box-shadow:0 24px 50px rgba(15,23,42,.2)}
+    .phone-inner{background:#f8fafc;border-radius:26px;overflow:hidden;min-height:650px;border:1px solid rgba(255,255,255,.15)}
+    .phone-head{background:linear-gradient(135deg,#2563eb,#16a34a);color:white;padding:18px}
+    .phone-head h3{margin:4px 0 0;font-size:20px}
+    .phone-head small{opacity:.9}
+    .phone-body{padding:14px;display:flex;flex-direction:column;gap:12px}
+    .mobile-card{background:white;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 10px 24px rgba(15,23,42,.06)}
+    .mobile-card h4{margin:0 0 6px;font-size:14px}
+    .mobile-card p{font-size:13px;color:#475569;margin:0;line-height:1.4}
+    .timeline{display:flex;flex-direction:column;gap:10px}
+    .event{border-left:4px solid #2563eb;background:#f8fafc;border-radius:0 14px 14px 0;padding:12px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .event strong{display:block}
+    .event small{color:#64748b;display:block;margin-top:3px;line-height:1.35}
+    .chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .chip{border:1px solid #cbd5e1;background:white;border-radius:999px;padding:8px 10px;font-weight:800;font-size:12px;color:#334155}
+    .list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .mini-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .mini-kpi div{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px}
+    .mini-kpi strong{display:block;font-size:18px;letter-spacing:-.03em}
+    .mini-kpi span{font-size:12px;color:#64748b}
+    .footer-note{color:#64748b;text-align:center;margin:24px 0 0;font-size:12px}
+    @media (max-width:1100px){
+      .cols-4{grid-template-columns:repeat(2,1fr)}
+      .cols-3{grid-template-columns:repeat(2,1fr)}
+      .split{grid-template-columns:1fr}
+      .sticky-demo{position:static}
+    }
+    @media (max-width:760px){
+      .app{display:block}
+      aside{position:relative;width:100%;height:auto;border-radius:0 0 24px 24px}
+      nav{display:grid;grid-template-columns:repeat(2,1fr)}
+      .navbtn{font-size:12px;padding:10px}
+      main{margin-left:0;width:100%;padding:14px}
+      .topbar{position:relative;top:0;display:block;padding:16px}
+      .actions{margin-top:12px;justify-content:flex-start}
+      .grid,.cols-2,.cols-3,.cols-4{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+      .photo-grid{grid-template-columns:repeat(2,1fr)}
+      .phone{max-width:100%}
+      .page-title h2{font-size:22px}
+      table{font-size:13px}
+    }
+    @media print{
+      aside,.actions,#toast{display:none!important}
+      main{margin:0;width:100%;padding:0}
+      .section{display:block!important;page-break-inside:avoid;margin-bottom:16px}
+      .topbar{position:static;box-shadow:none;border:0}
+      .card{box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <div class="logo">F3</div>
+      <div><h1>Flota 360</h1><small>V2 · Reunión Alexander</small></div>
+    </div>
+    <div class="prototype-tag">
+      Prototipo navegable para validar con Alexander, jefe del taller y don Jorge. Foco: recepción formal, costos por OT, evidencia, proveedor, aprobación y visibilidad cliente.
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-section">
+      <h3>Reglas no negociables</h3>
+      <div class="side-pill">
+        <span>✅ Recepción con empresa, conductor y firmantes.</span>
+        <span>✅ Gasto, repuesto o compra siempre asociado a OT.</span>
+        <span>✅ Diagnóstico con evidencia antes de cotizar.</span>
+        <span>✅ Daño oculto requiere respaldo formal por correo.</span>
+        <span>✅ Entrega con checklist, fotos, prueba de ruta y seguimiento 72h.</span>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div class="page-title">
+        <h2 id="title">Panel Ejecutivo</h2>
+        <p id="subtitle">Vista inicial post reunión: decisión de modernizar operación, reemplazar métodos manuales y controlar costos con trazabilidad por orden.</p>
+      </div>
+      <div class="actions">
+        <button class="ghost" onclick="window.print()">Imprimir / PDF</button>
+        <button class="primary" onclick="openSection('proximos')">Ver próximos pasos</button>
+      </div>
+    </div>
+
+    <section id="dashboard" class="section active">
+      <div class="grid cols-4">
+        <div class="card metric"><span class="label">Órdenes abiertas</span><span class="value">18</span><span class="note">5 esperan autorización y 3 tienen costo no cerrado.</span></div>
+        <div class="card metric"><span class="label">Costo sin OT</span><span class="value">$420k</span><span class="note">Riesgo de pérdida si no se vincula a cliente/orden.</span></div>
+        <div class="card metric"><span class="label">Fotos pendientes</span><span class="value">7</span><span class="note">Bloquea diagnóstico formal y defensa ante reclamos.</span></div>
+        <div class="card metric"><span class="label">Seguimientos 72h</span><span class="value">4</span><span class="note">Post entrega antes del cierre técnico-financiero.</span></div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>Decisión de la reunión</h3>
+        <p>Se valida avanzar con una herramienta operativa para sustituir métodos manuales, ordenar recepción, diagnóstico, costos, evidencias, autorizaciones y comunicación con clientes de flota.</p>
+        <div class="pipeline">
+          <div class="step done"><strong>Recepción formal</strong><small>Empresa, conductor, síntomas, firmantes, fotos y estado inicial.</small></div>
+          <div class="step current"><strong>Diagnóstico</strong><small>Separar trabajos confirmados vs sospechados.</small></div>
+          <div class="step"><strong>Cotización</strong><small>Aprobación digital + respaldo por correo en casos críticos.</small></div>
+          <div class="step"><strong>Costos por OT</strong><small>Repuestos, compras urgentes y gastos imprevistos.</small></div>
+          <div class="step"><strong>Proveedor</strong><small>Historial de precios, fechas y repuestos comprados.</small></div>
+          <div class="step"><strong>Calidad</strong><small>Checklist, fotos, prueba ruta y entrega formal.</small></div>
+          <div class="step"><strong>Portal cliente</strong><small>Visibilidad restringida para gestor de flota.</small></div>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:16px">
+        <div class="card">
+          <h3>Dolores principales confirmados</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Dolor</th><th>Impacto</th><th>Solución en prototipo</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td>Recepción informal</td><td>Reclamos, daños no registrados, pérdida de control.</td><td>Recepción digital con empresa, firmantes, fotos y comprobante.</td><td><span class="badge green">Incluido V2</span></td></tr>
+                <tr><td>Costos no trazados</td><td>Gastos difíciles de recuperar y margen falso.</td><td>Control de gastos y compras asociados a OT.</td><td><span class="badge green">Incluido V2</span></td></tr>
+                <tr><td>Precios desfasados</td><td>Cotizaciones con valores antiguos y pérdida financiera.</td><td>Historial de proveedor por repuesto, fecha y precio.</td><td><span class="badge green">Incluido V2</span></td></tr>
+                <tr><td>Cliente sin visibilidad</td><td>Llamadas, WhatsApp y presión por avance.</td><td>Portal cliente con estados, ETA y aprobaciones.</td><td><span class="badge amber">Validar flujo real</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="sticky-demo">
+          <h3>Mensaje para Alexander</h3>
+          <p>“Esta versión ya incorpora lo conversado: recepción con empresa y firmantes, respaldo de síntomas, gastos por OT, historial de proveedores y visibilidad controlada para clientes.”</p>
+          <div class="prompt"><strong>Objetivo del martes:</strong><br>Que el jefe y don Jorge vean que esto no es solo una app; es control operativo, financiero y de calidad.</div>
+          <div class="prompt"><strong>Pregunta ejecutiva:</strong><br>¿Qué proceso están dispuestos a volver obligatorio desde el primer día?</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="solicitud" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Nueva solicitud de servicio</h3>
+          <p>Captura mínima antes de recibir el vehículo. Sirve para ordenar prioridad, fecha, contacto y expectativa del cliente.</p>
+          <div class="form-grid">
+            <div><label>Empresa cliente</label><input value="Logística Andes SpA"></div>
+            <div><label>Contacto / decisor</label><input value="María Torres — Encargada de Flota"></div>
+            <div><label>Vehículo</label><input value="KIA K2700 — Patente LLBB-42"></div>
+            <div><label>Prioridad</label><select><option>Alta — vehículo detenido</option><option>Media — requiere agenda</option><option>Baja — mantenimiento preventivo</option></select></div>
+            <div><label>Fecha sugerida de ingreso</label><input type="date" value="2026-06-30"></div>
+            <div><label>Canal origen</label><select><option>WhatsApp</option><option>Correo</option><option>Portal cliente</option><option>Teléfono</option></select></div>
+            <div style="grid-column:1/-1"><label>Síntoma reportado por cliente</label><textarea>Ruido al frenar, pérdida de potencia y mantenimiento preventivo vencido.</textarea></div>
+          </div>
+          <div class="validation-box">
+            <h4>Validar con Alexander</h4>
+            <ul>
+              <li>¿El cliente entra por WhatsApp, llamada, correo o visita directa?</li>
+              <li>¿En qué momento debe ver información el gestor de flota?</li>
+              <li>¿Quién decide si un vehículo ingresa o queda pendiente de agenda?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Agenda operativa</h3>
+          <div class="timeline">
+            <div class="event"><strong>08:30 — Recepción programada</strong><small>Logística Andes · KIA K2700 · Responsable: Pedro · requiere firma.</small></div>
+            <div class="event"><strong>10:00 — Diagnóstico express</strong><small>Seguridad Norte · Hilux · Mecánico: Carlos · fotos obligatorias.</small></div>
+            <div class="event"><strong>12:30 — Entrega comprometida</strong><small>Fumigaciones Delta · NP300 · prueba de ruta pendiente.</small></div>
+            <div class="event"><strong>15:00 — Compra de repuestos</strong><small>Proveedor: Repuestos Centro · debe vincularse a OT.</small></div>
+          </div>
+          <div class="alert" style="margin-top:14px"><strong>Riesgo:</strong> si la agenda no separa diagnóstico, ejecución y entrega, el taller promete fechas sin capacidad real.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="recepcion" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Recepción digital del vehículo</h3>
+          <p>Actualización V2: se incorpora empresa, firmantes, autorización de entrada y síntoma reportado por el conductor.</p>
+          <div class="form-grid">
+            <div><label>Empresa</label><input value="Logística Andes SpA"></div>
+            <div><label>RUT / ID empresa</label><input value="76.111.222-3"></div>
+            <div><label>Conductor</label><input value="Luis Méndez"></div>
+            <div><label>Patente</label><input value="LLBB-42"></div>
+            <div><label>Kilometraje ingreso</label><input value="82.450 km"></div>
+            <div><label>Combustible ingreso</label><select><option>1/2 estanque</option><option>1/4</option><option>3/4</option><option>Lleno</option></select></div>
+            <div><label>Firma recepción taller</label><input value="Pedro Gutiérrez — Jefe de patio"></div>
+            <div><label>Autoriza entrada vehículo</label><input value="María Torres — Gestora de flota"></div>
+            <div style="grid-column:1/-1"><label>Síntoma reportado por conductor</label><textarea>Al frenar se escucha ruido metálico. El conductor indica pérdida de potencia en subida y vibración sobre 80 km/h.</textarea></div>
+            <div style="grid-column:1/-1"><label>Pertenencias declaradas</label><input value="Extintor, gata, triángulo, rueda de repuesto, chaleco reflectante"></div>
+            <div style="grid-column:1/-1"><label>Daños preexistentes</label><textarea>Rayón lateral derecho, parachoques trasero con golpe leve, espejo izquierdo rayado.</textarea></div>
+          </div>
+          <div class="photo-grid">
+            <div class="photo-placeholder">📷<small>Frontal</small></div><div class="photo-placeholder">📷<small>Lateral derecho</small></div><div class="photo-placeholder">📷<small>Lateral izquierdo</small></div>
+            <div class="photo-placeholder">📷<small>Trasera</small></div><div class="photo-placeholder">📷<small>Tablero/km</small></div><div class="photo-placeholder">📷<small>Daño declarado</small></div>
+          </div>
+          <div class="validation-box">
+            <h4>Decisión pendiente</h4>
+            <ul>
+              <li>Definir si firma el conductor, el gestor de flota o ambos.</li>
+              <li>Definir si la autorización de entrada se hace digital, correo o ambas.</li>
+              <li>Definir qué fotos son obligatorias antes de crear la OT.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="phone-inner">
+            <div class="phone-head"><small>Vista móvil · recepción</small><h3>Ingreso LLBB-42</h3></div>
+            <div class="phone-body">
+              <div class="mobile-card"><h4>Empresa</h4><p>Logística Andes SpA · Contacto: María Torres</p></div>
+              <div class="mobile-card"><h4>Firmantes</h4><p><span class="badge green">Taller firmado</span> <span class="badge amber">Cliente pendiente</span></p></div>
+              <div class="mobile-card"><h4>Síntoma conductor</h4><p>Ruido metálico al frenar + vibración sobre 80 km/h.</p></div>
+              <button class="primary" onclick="toast('Orden de trabajo creada en modo demo')" style="justify-content:center">Crear orden de trabajo</button>
+              <button class="ghost" onclick="toast('Comprobante enviado al correo del cliente')" style="justify-content:center">Enviar comprobante</button>
+              <div class="risk"><strong>No negociable:</strong> sin recepción formal, el taller asume riesgo por daños previos, pertenencias y reclamos.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="orden" class="section">
+      <div class="card">
+        <h3>Orden de trabajo — OT-1048</h3>
+        <p>La OT concentra trazabilidad técnica, comercial y financiera. Cada responsable queda registrado para rendición de cuentas.</p>
+        <div class="grid cols-3">
+          <div class="status-card"><div><h4>Cliente</h4><p>Logística Andes · flota 62 vehículos · pago 30 días.</p></div><span class="badge blue">Contrato marco</span></div>
+          <div class="status-card"><div><h4>Responsable OT</h4><p>Pedro Gutiérrez · responde por recepción, avance y cierre.</p></div><span class="badge green">Asignado</span></div>
+          <div class="status-card"><div><h4>Estado</h4><p>Diagnóstico preliminar listo; cotización parcial pendiente.</p></div><span class="badge amber">En curso</span></div>
+        </div>
+        <div class="pipeline" style="margin-top:16px">
+          <div class="step done"><strong>Recepción</strong><small>Empresa, firmantes, fotos y síntoma registrados.</small></div>
+          <div class="step current"><strong>Diagnóstico</strong><small>Confirmado vs sospechado.</small></div>
+          <div class="step"><strong>Cotización</strong><small>Mano de obra, repuestos, gastos externos.</small></div>
+          <div class="step blocked"><strong>Bloqueo</strong><small>No ejecutar adicional sin autorización.</small></div>
+          <div class="step"><strong>Calidad</strong><small>Checklist final y prueba de ruta.</small></div>
+          <div class="step"><strong>Cierre</strong><small>Entrega, garantía, seguimiento 72h y factura.</small></div>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card">
+          <h3>Bitácora de la OT</h3>
+          <div class="timeline">
+            <div class="event"><strong>08:42 — Recepción firmada por taller</strong><small>Responsable: Pedro · conductor presente · fotos iniciales cargadas.</small></div>
+            <div class="event"><strong>09:20 — Diagnóstico preliminar</strong><small>Mecánico: Carlos · pastillas delanteras con desgaste crítico confirmado.</small></div>
+            <div class="event"><strong>10:10 — Hallazgo sospechado</strong><small>Vibración puede venir de soporte motor o balanceo. Requiere prueba adicional.</small></div>
+            <div class="event"><strong>10:45 — Compra urgente registrada</strong><small>Filtro aceite comprado sin stock interno · vinculado a OT-1048.</small></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Controles obligatorios</h3>
+          <div class="status-card"><div><h4>Responsable por garantía</h4><p>Debe quedar asignado para trazabilidad ante reingresos.</p></div><span class="badge green">Pedro</span></div>
+          <div class="status-card"><div><h4>Respaldo correo</h4><p>Obligatorio ante daños ocultos o cambios de alcance.</p></div><span class="badge amber">Pendiente</span></div>
+          <div class="status-card"><div><h4>Gasto asociado</h4><p>No se acepta compra sin OT o centro de costo temporal.</p></div><span class="badge green">Activo</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="diagnostico" class="section">
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Diagnóstico técnico conectado a comercial</h3>
+          <p>Se separan trabajos confirmados de trabajos sospechados para no inflar expectativas ni ejecutar sin evidencia.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Ítem</th><th>Tipo</th><th>Evidencia</th><th>Acción comercial</th></tr></thead>
+              <tbody>
+                <tr><td>Pastillas delanteras</td><td><span class="badge green">Confirmado</span></td><td>Foto desgaste + medición</td><td>Cotizar cambio inmediato</td></tr>
+                <tr><td>Discos delanteros</td><td><span class="badge amber">Sospechado</span></td><td>Requiere medición espesor</td><td>Informar posible adicional</td></tr>
+                <tr><td>Vibración sobre 80 km/h</td><td><span class="badge amber">Sospechado</span></td><td>Prueba ruta pendiente</td><td>No cotizar definitivo aún</td></tr>
+                <tr><td>Filtro aceite</td><td><span class="badge green">Confirmado</span></td><td>Mantenimiento vencido</td><td>Cotizar preventivo</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="info" style="margin-top:14px"><strong>Uso en venta:</strong> esta pantalla muestra profesionalismo porque el cliente entiende qué es certeza, qué es hipótesis y qué requiere autorización adicional.</div>
+        </div>
+        <div class="card">
+          <h3>Proceso fotográfico del diagnóstico</h3>
+          <p>Decisión pendiente del grupo: definir si las fotos las carga el mecánico o el jefe de patio.</p>
+          <div class="photo-grid">
+            <div class="photo-placeholder">📷<small>Pastilla externa</small></div><div class="photo-placeholder">📷<small>Disco</small></div><div class="photo-placeholder">📷<small>Filtro</small></div>
+            <div class="photo-placeholder">📷<small>Soporte motor</small></div><div class="photo-placeholder">📷<small>Scanner</small></div><div class="photo-placeholder">📷<small>Prueba ruta</small></div>
+          </div>
+          <div class="validation-box">
+            <h4>Parámetro a definir</h4>
+            <ul>
+              <li>¿Mecánico sube evidencia desde móvil o jefe de patio valida y carga?</li>
+              <li>¿Qué fotos son obligatorias por tipo de trabajo?</li>
+              <li>¿Quién aprueba que el diagnóstico está listo para cotizar?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="autorizacion" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Cotización y autorización</h3>
+          <p>La aprobación digital acelera el proceso, pero V2 contempla respaldo formal por correo cuando hay daño oculto o cambio de alcance.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Concepto</th><th>Tipo</th><th>Valor</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td>Cambio pastillas delanteras</td><td>Confirmado</td><td>$126.000</td><td><span class="badge green">Aprobable</span></td></tr>
+                <tr><td>Mantenimiento preventivo</td><td>Confirmado</td><td>$106.950</td><td><span class="badge green">Aprobable</span></td></tr>
+                <tr><td>Rectificado discos</td><td>Condicional</td><td>$75.000</td><td><span class="badge amber">Requiere medición</span></td></tr>
+                <tr><td>Soporte motor</td><td>Sospechado</td><td>Por definir</td><td><span class="badge red">No ejecutar</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mini-kpi">
+            <div><strong>$232.950</strong><span>Total confirmado</span></div>
+            <div><strong>$75.000</strong><span>Posible adicional</span></div>
+            <div><strong>30 días</strong><span>Plazo pago cliente</span></div>
+          </div>
+          <div class="alert" style="margin-top:14px"><strong>Regla:</strong> un daño oculto debe quedar justificado con evidencia, cotización, aprobación y respaldo por correo antes de ejecutar.</div>
+        </div>
+        <div class="phone">
+          <div class="phone-inner">
+            <div class="phone-head"><small>Vista cliente · aprobación</small><h3>Cotización LLBB-42</h3></div>
+            <div class="phone-body">
+              <div class="mobile-card"><h4>Trabajos confirmados</h4><p>Pastillas + mantenimiento preventivo: $232.950.</p></div>
+              <div class="mobile-card"><h4>Trabajos sospechados</h4><p>Vibración requiere prueba adicional. No se ejecutará sin nueva autorización.</p></div>
+              <button class="success" onclick="toast('Aprobación registrada en modo demo')" style="justify-content:center">Aprobar confirmado</button>
+              <button class="ghost" onclick="toast('Correo de respaldo generado')" style="justify-content:center">Enviar respaldo por correo</button>
+              <button class="danger" onclick="toast('Rechazo registrado en bitácora')" style="justify-content:center">Rechazar</button>
+              <div class="mobile-card"><h4>Visibilidad restringida</h4><p>El cliente solo ve sus vehículos, estados, cotizaciones, evidencias y ETA.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gastos" class="section">
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Control de gastos vinculados a OT</h3>
+          <p>Actualización crítica: cada gasto debe quedar asociado a una orden de trabajo específica o a un centro de costo temporal hasta regularizarlo.</p>
+          <div class="form-grid">
+            <div><label>Orden de trabajo</label><select><option>OT-1048 · LLBB-42</option><option>OT-1049 · JRCC-18</option><option>Sin OT inmediata · Pendiente regularizar</option></select></div>
+            <div><label>Tipo gasto</label><select><option>Repuesto</option><option>Servicio externo</option><option>Traslado</option><option>Insumo taller</option><option>Compra urgente</option></select></div>
+            <div><label>Proveedor</label><input value="Repuestos Centro"></div>
+            <div><label>Monto</label><input value="$18.900"></div>
+            <div><label>Fecha compra</label><input type="date" value="2026-06-30"></div>
+            <div><label>Recuperable al cliente</label><select><option>Sí, va en cotización</option><option>No, costo interno</option><option>Por validar</option></select></div>
+            <div style="grid-column:1/-1"><label>Observación</label><textarea>Filtro comprado por urgencia porque no había stock interno. Debe aparecer en margen de OT-1048.</textarea></div>
+          </div>
+          <div class="risk" style="margin-top:14px"><strong>Dolor que resuelve:</strong> compras realizadas sin seguimiento que después no se cobran o destruyen el margen real de la orden.</div>
+        </div>
+        <div class="card">
+          <h3>Gastos recientes</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Fecha</th><th>Gasto</th><th>Proveedor</th><th>Monto</th><th>OT</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td>30/06</td><td>Filtro aceite</td><td>Repuestos Centro</td><td>$18.900</td><td>OT-1048</td><td><span class="badge green">Vinculado</span></td></tr>
+                <tr><td>30/06</td><td>Rectificado</td><td>Torno Express</td><td>$75.000</td><td>OT-1048</td><td><span class="badge amber">Requiere aprobación</span></td></tr>
+                <tr><td>29/06</td><td>Traslado repuesto</td><td>Courier local</td><td>$8.000</td><td>Sin OT</td><td><span class="badge red">Regularizar</span></td></tr>
+                <tr><td>29/06</td><td>Pastillas freno</td><td>Distribuidora Sur</td><td>$52.000</td><td>OT-1049</td><td><span class="badge green">Vinculado</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="alert" style="margin-top:14px"><strong>Validar:</strong> definir quién puede registrar gastos, quién aprueba compras urgentes y cuándo se bloquea una OT por costo no autorizado.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="proveedores" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Historial de proveedor</h3>
+          <p>Nuevo módulo solicitado por Alexander para consultar compras históricas por proveedor, repuesto, valor y fecha.</p>
+          <div class="form-grid">
+            <div><label>Buscar proveedor</label><input value="Repuestos Centro"></div>
+            <div><label>Buscar repuesto</label><input value="Pastillas freno KIA K2700"></div>
+          </div>
+          <div class="table-wrap" style="margin-top:14px">
+            <table>
+              <thead><tr><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Valor</th><th>OT</th><th>Observación</th></tr></thead>
+              <tbody>
+                <tr><td>30/06/2026</td><td>Repuestos Centro</td><td>Filtro aceite KIA K2700</td><td>$18.900</td><td>OT-1048</td><td>Compra urgente</td></tr>
+                <tr><td>14/06/2026</td><td>Repuestos Centro</td><td>Pastillas freno KIA K2700</td><td>$52.000</td><td>OT-1031</td><td>Disponible mismo día</td></tr>
+                <tr><td>03/05/2026</td><td>Distribuidora Sur</td><td>Pastillas freno KIA K2700</td><td>$47.500</td><td>OT-0988</td><td>Precio anterior</td></tr>
+                <tr><td>19/04/2026</td><td>Repuestos Centro</td><td>Disco freno KIA K2700</td><td>$68.000</td><td>OT-0944</td><td>Sin garantía extendida</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Uso del historial en cotización</h3>
+          <div class="ok"><strong>Beneficio:</strong> evita presupuestar con precios desfasados y permite comparar proveedores antes de enviar una cotización al cliente.</div>
+          <br>
+          <div class="status-card"><div><h4>Último precio</h4><p>Pastillas KIA K2700 compradas a $52.000 el 14/06/2026.</p></div><span class="badge blue">Referencia</span></div>
+          <div class="status-card"><div><h4>Variación de mercado</h4><p>Precio anterior $47.500. Diferencia +9,5%.</p></div><span class="badge amber">Actualizar</span></div>
+          <div class="status-card"><div><h4>Riesgo financiero</h4><p>Si se cotiza con precio antiguo, el margen queda artificialmente alto.</p></div><span class="badge red">Crítico</span></div>
+          <div class="validation-box">
+            <h4>Preguntas para el dueño</h4>
+            <ul>
+              <li>¿Quién compra hoy los repuestos?</li>
+              <li>¿Cómo se decide el proveedor?</li>
+              <li>¿Qué pasa si el precio cambia después de cotizar?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calidad" class="section">
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Ejecución y control de calidad</h3>
+          <p>El encargado debe documentar evidencia de instalación, checklist final, prueba estática y prueba de ruta cuando corresponda.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Control</th><th>Responsable</th><th>Evidencia</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td>Repuesto antiguo retirado</td><td>Mecánico Carlos</td><td>Foto</td><td><span class="badge green">Completo</span></td></tr>
+                <tr><td>Repuesto nuevo instalado</td><td>Mecánico Carlos</td><td>Foto + factura proveedor</td><td><span class="badge green">Completo</span></td></tr>
+                <tr><td>Torque / revisión final</td><td>Jefe de patio</td><td>Checklist</td><td><span class="badge amber">Pendiente</span></td></tr>
+                <tr><td>Prueba estática</td><td>Jefe de patio</td><td>Checklist</td><td><span class="badge amber">Pendiente</span></td></tr>
+                <tr><td>Prueba de ruta</td><td>Encargado asignado</td><td>Km salida/llegada + observación</td><td><span class="badge red">Bloqueante</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Checklist de entrega final</h3>
+          <div class="status-card"><div><h4>Fotos finales</h4><p>Exterior, tablero, área intervenida y repuesto instalado.</p></div><span class="badge amber">Pendiente</span></div>
+          <div class="status-card"><div><h4>Prueba de ruta</h4><p>Obligatoria para frenos, dirección, suspensión, motor o vibraciones.</p></div><span class="badge red">Bloquea entrega</span></div>
+          <div class="status-card"><div><h4>Informe final</h4><p>Trabajos ejecutados, pendientes no autorizados, repuestos y garantía.</p></div><span class="badge amber">Pendiente</span></div>
+          <div class="status-card"><div><h4>Firma conformidad</h4><p>Cliente o conductor acepta recepción del vehículo.</p></div><span class="badge amber">Pendiente</span></div>
+          <div class="ok" style="margin-top:14px"><strong>Objetivo:</strong> reducir reclamos, retrabajos y garantías mal documentadas.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="entrega" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Entrega, garantía y seguimiento</h3>
+          <p>La entrega incluye kilometraje, combustible, observaciones, garantía técnica de 30 días y seguimiento automático de 72 horas.</p>
+          <div class="form-grid">
+            <div><label>Kilometraje entrega</label><input value="82.468 km"></div>
+            <div><label>Combustible entrega</label><select><option>1/2 estanque</option><option>1/4</option><option>3/4</option><option>Lleno</option></select></div>
+            <div><label>Retira vehículo</label><input value="Luis Méndez — conductor"></div>
+            <div><label>Garantía técnica</label><select><option>30 días</option><option>Sin garantía</option><option>Garantía especial proveedor</option></select></div>
+            <div style="grid-column:1/-1"><label>Observaciones de entrega</label><textarea>Frenos operativos. Se recomienda revisar soporte motor si persiste vibración. El cliente no autorizó evaluación adicional por ahora.</textarea></div>
+          </div>
+          <div class="photo-grid">
+            <div class="photo-placeholder">📷<small>Tablero entrega</small></div><div class="photo-placeholder">📷<small>Trabajo final</small></div><div class="photo-placeholder">📷<small>Exterior entrega</small></div>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="phone-inner">
+            <div class="phone-head"><small>Vista móvil · cierre</small><h3>Entrega LLBB-42</h3></div>
+            <div class="phone-body">
+              <div class="mobile-card"><h4>Checklist final</h4><p><span class="badge green">Fotos</span> <span class="badge amber">Prueba ruta</span> <span class="badge green">Informe</span></p></div>
+              <div class="mobile-card"><h4>Garantía</h4><p>30 días sobre trabajos ejecutados y repuestos instalados.</p></div>
+              <div class="mobile-card"><h4>Seguimiento automático</h4><p>Programado para 72 horas post entrega antes del cierre técnico-financiero.</p></div>
+              <button class="primary" onclick="toast('Entrega registrada en modo demo')" style="justify-content:center">Registrar entrega</button>
+              <button class="ghost" onclick="toast('Seguimiento 72h programado')" style="justify-content:center">Programar seguimiento 72h</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="finanzas" class="section">
+      <div class="grid cols-4">
+        <div class="card metric"><span class="label">Venta OT-1048</span><span class="value">$232.950</span><span class="note">Trabajos confirmados aprobables.</span></div>
+        <div class="card metric"><span class="label">Costo directo</span><span class="value">$99.500</span><span class="note">Repuestos + insumos + compra urgente.</span></div>
+        <div class="card metric"><span class="label">Margen estimado</span><span class="value">57%</span><span class="note">Antes de gastos fijos y cobranza.</span></div>
+        <div class="card metric"><span class="label">Cobranza</span><span class="value">30 días</span><span class="note">No confundir facturación con caja.</span></div>
+      </div>
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card">
+          <h3>Margen por orden</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>OT</th><th>Cliente</th><th>Venta</th><th>Costo directo</th><th>Gasto no previsto</th><th>Margen</th></tr></thead>
+              <tbody>
+                <tr><td>OT-1048</td><td>Logística Andes</td><td>$232.950</td><td>$99.500</td><td>$18.900</td><td>57%</td></tr>
+                <tr><td>OT-1049</td><td>Seguridad Norte</td><td>$730.000</td><td>$490.000</td><td>$0</td><td>33%</td></tr>
+                <tr><td>OT-1050</td><td>Servicios Técnicos RM</td><td>$215.000</td><td>$160.000</td><td>$8.000</td><td>22%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Parámetros financieros por definir</h3>
+          <div class="risk"><strong>Riesgo confirmado:</strong> el taller no tiene una gestión clara de flujo de caja. Sin este control, se puede vender mucho y quedarse sin caja.</div>
+          <br>
+          <div class="status-card"><div><h4>Plazos de pago</h4><p>Definir 0, 15, 30, 45 o 60 días por cliente.</p></div><span class="badge amber">Pendiente</span></div>
+          <div class="status-card"><div><h4>Márgenes mínimos</h4><p>Separar mano de obra, repuestos, servicios externos y gastos menores.</p></div><span class="badge amber">Pendiente</span></div>
+          <div class="status-card"><div><h4>Compras sin OT</h4><p>Definir regla de regularización y autorización.</p></div><span class="badge red">Crítico</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Portal del cliente — visibilidad restringida</h3>
+          <p>El gestor de flota no ve la operación completa del taller. Solo ve sus vehículos, estados, ETA, evidencias permitidas y acciones pendientes.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Vehículo</th><th>Estado</th><th>Próxima acción</th><th>Responsable</th><th>ETA</th></tr></thead>
+              <tbody>
+                <tr><td>LLBB-42</td><td><span class="badge amber">Esperando autorización</span></td><td>Aprobar trabajos confirmados</td><td>María Torres</td><td>Hoy 13:00</td></tr>
+                <tr><td>JRCC-18</td><td><span class="badge blue">En diagnóstico</span></td><td>Revisión técnica</td><td>Taller</td><td>Mañana 10:00</td></tr>
+                <tr><td>PKDD-90</td><td><span class="badge green">Listo para retiro</span></td><td>Coordinar entrega</td><td>Cliente</td><td>Hoy 17:30</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="validation-box">
+            <h4>Alexander debe investigar</h4>
+            <ul>
+              <li>¿Cómo es el flujo real de ingreso e inicio de trabajo?</li>
+              <li>¿Qué estado debería ver el cliente y cuál debe ser interno?</li>
+              <li>¿Quién aprueba cotizaciones: conductor, gestor de flota o dueño?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="phone-inner">
+            <div class="phone-head"><small>Vista cliente</small><h3>Mi flota en taller</h3></div>
+            <div class="phone-body">
+              <div class="mobile-card"><h4>LLBB-42 · KIA K2700</h4><p><span class="badge amber">Tu aprobación detiene el avance</span></p></div>
+              <div class="mobile-card"><h4>Cotización pendiente</h4><p>Trabajos confirmados: $232.950. Posible adicional no autorizado: $75.000.</p></div>
+              <button class="success" onclick="toast('Cliente aprobó en modo demo')" style="justify-content:center">Aprobar</button>
+              <button class="danger" onclick="toast('Cliente rechazó en modo demo')" style="justify-content:center">Rechazar</button>
+              <div class="mobile-card"><h4>Evidencia visible</h4><p>Fotos iniciales, diagnóstico confirmado, cotización y fecha estimada de entrega.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="parametros" class="section">
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Parámetros del negocio por definir</h3>
+          <p>Antes de construir software completo, se deben cerrar definiciones operativas con el dueño del taller.</p>
+          <div class="status-card"><div><h4>Flujos de autorización</h4><p>Quién aprueba desarme, diagnóstico, cotización y cambios de alcance.</p></div><span class="badge red">Crítico</span></div>
+          <div class="status-card"><div><h4>Perfiles de usuario</h4><p>Dueño, jefe de patio, mecánico, compras, administración, cliente.</p></div><span class="badge amber">Definir</span></div>
+          <div class="status-card"><div><h4>Plazos de pago</h4><p>Condiciones por cliente y bloqueo por deuda.</p></div><span class="badge amber">Definir</span></div>
+          <div class="status-card"><div><h4>Capacidad de carga</h4><p>Vehículos por día, bahías, mecánicos y trabajos por especialidad.</p></div><span class="badge amber">Definir</span></div>
+          <div class="status-card"><div><h4>Márgenes por cliente</h4><p>Mano de obra, repuestos, servicios externos y gastos no previstos.</p></div><span class="badge red">Crítico</span></div>
+        </div>
+        <div class="card">
+          <h3>Perfiles sugeridos</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Perfil</th><th>Puede ver</th><th>Puede aprobar</th><th>Restricción</th></tr></thead>
+              <tbody>
+                <tr><td>Dueño</td><td>Todo</td><td>Parámetros, descuentos, compras críticas</td><td>Ninguna</td></tr>
+                <tr><td>Jefe de patio</td><td>OT, recepción, diagnóstico, calidad</td><td>Recepción y QC</td><td>No cambia márgenes</td></tr>
+                <tr><td>Mecánico</td><td>Órdenes asignadas</td><td>Evidencia técnica</td><td>No ve finanzas</td></tr>
+                <tr><td>Compras</td><td>Repuestos y proveedores</td><td>Compras dentro de regla</td><td>No cierra OT</td></tr>
+                <tr><td>Cliente flota</td><td>Sus vehículos</td><td>Cotizaciones propias</td><td>No ve operación interna</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="proximos" class="section">
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Próximos pasos acordados</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Responsable</th><th>Acción</th><th>Objetivo</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td>Deivy</td><td>Ajustar prototipo y enviar por WhatsApp</td><td>Revisión móvil antes de presentación</td><td><span class="badge green">Hecho V2</span></td></tr>
+                <tr><td>Deivy</td><td>Agregar empresa y firmantes</td><td>Formalizar recepción</td><td><span class="badge green">Hecho V2</span></td></tr>
+                <tr><td>Deivy</td><td>Crear historial proveedor</td><td>Mejorar precisión de cotización</td><td><span class="badge green">Hecho V2</span></td></tr>
+                <tr><td>Alexander</td><td>Investigar flujo real de clientes</td><td>Definir visibilidad del portal</td><td><span class="badge amber">Pendiente</span></td></tr>
+                <tr><td>Deivy</td><td>Definir parámetros negocio con dueño</td><td>Roles, autorizaciones y pagos</td><td><span class="badge amber">Pendiente</span></td></tr>
+                <tr><td>Grupo</td><td>Definir proceso fotográfico</td><td>Mecánico vs jefe de patio</td><td><span class="badge amber">Pendiente</span></td></tr>
+                <tr><td>Alexander</td><td>Presentar propuesta el martes</td><td>Alinear jefe y don Jorge</td><td><span class="badge blue">Próximo</span></td></tr>
+                <tr><td>Grupo</td><td>Coordinar reunión con posible socio</td><td>Evaluar interés y términos</td><td><span class="badge red">Por validar</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Checklist para presentación del martes</h3>
+          <div class="status-card"><div><h4>1. Abrir con problema</h4><p>Métodos manuales, WhatsApp, poca visibilidad, costos no controlados.</p></div><span class="badge blue">Guion</span></div>
+          <div class="status-card"><div><h4>2. Mostrar recepción digital</h4><p>Empresa, firmantes, síntoma, fotos y creación automática de OT.</p></div><span class="badge green">Demo</span></div>
+          <div class="status-card"><div><h4>3. Mostrar costos por OT</h4><p>Cómo se evita perder plata por compras no trazadas.</p></div><span class="badge green">Demo</span></div>
+          <div class="status-card"><div><h4>4. Mostrar historial proveedor</h4><p>Cómo se evita cotizar con precios antiguos.</p></div><span class="badge green">Demo</span></div>
+          <div class="status-card"><div><h4>5. Cerrar con decisión</h4><p>Definir piloto, responsables, flujo obligatorio y próximo taller presencial.</p></div><span class="badge amber">Conversar</span></div>
+          <div class="risk" style="margin-top:14px"><strong>Advertencia estratégica:</strong> no hablar de sociedad formal ni porcentajes sin medir compromiso, rol real, aporte y visión del posible socio.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="validacion" class="section">
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Clasificación de información post reunión</h3>
+          <div class="status-card"><div><h4>Hecho comprobado</h4><p>Alexander validó que los métodos actuales son manuales/arcaicos y que existe dolor en costos, fotos y visibilidad.</p></div><span class="badge green">Confirmado</span></div>
+          <div class="status-card"><div><h4>Decisión tomada</h4><p>Ajustar prototipo y usarlo para presentar la propuesta al jefe y don Jorge.</p></div><span class="badge green">Confirmado</span></div>
+          <div class="status-card"><div><h4>Supuesto</h4><p>El dueño estará dispuesto a implementar un flujo obligatorio y cambiar hábitos internos.</p></div><span class="badge amber">Validar</span></div>
+          <div class="status-card"><div><h4>Riesgo</h4><p>Que el interés sea solo visual, sin compromiso operativo, presupuesto ni responsables internos.</p></div><span class="badge red">Alto</span></div>
+          <div class="status-card"><div><h4>Información pendiente</h4><p>Flujo real de ingreso, roles, autorizaciones, plazos de pago, permisos de cliente y capacidad.</p></div><span class="badge amber">Pendiente</span></div>
+        </div>
+        <div class="card">
+          <h3>Go / No Go para piloto tecnológico</h3>
+          <div class="ok"><strong>Go controlado:</strong> avanzar si el dueño acepta un piloto con recepción digital, control de gastos por OT, evidencia fotográfica, cotización/autorización y checklist de entrega.</div>
+          <br>
+          <div class="alert"><strong>Condición:</strong> antes de desarrollo completo, validar el proceso con usuarios reales del taller y al menos una flota privada o flujo interno activo.</div>
+          <br>
+          <div class="risk"><strong>No Go:</strong> si no existe responsable interno, si no se definen autorizaciones, si nadie cargará fotos, o si compras/repuestos siguen fuera de la OT.</div>
+          <div class="validation-box">
+            <h4>Preguntas para cerrar con dueño</h4>
+            <ul>
+              <li>¿Quién será el dueño interno del proceso?</li>
+              <li>¿Qué módulo genera valor inmediato: recepción, gastos, proveedor o portal cliente?</li>
+              <li>¿Qué flujo actual están dispuestos a eliminar?</li>
+              <li>¿Con qué cliente/vehículo se puede pilotear sin prometer más de lo validado?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">Prototipo conceptual V2 para validación operacional. No representa versión final, presupuesto, contrato ni compromiso de desarrollo.</p>
+  </main>
+</div>
+
+<div id="toast" style="position:fixed;right:18px;bottom:18px;background:#0f172a;color:white;padding:13px 16px;border-radius:14px;box-shadow:0 14px 35px rgba(15,23,42,.25);opacity:0;transform:translateY(10px);transition:.2s ease;z-index:20;font-weight:800"></div>
+
+<script>
+  const sections = [
+    {id:'dashboard', title:'Panel Ejecutivo', subtitle:'Vista inicial post reunión: decisión de modernizar operación, reemplazar métodos manuales y controlar costos con trazabilidad por orden.'},
+    {id:'solicitud', title:'Solicitud y Agenda', subtitle:'Ordena la entrada del vehículo, prioridad, contacto, canal y fecha antes de crear la OT.'},
+    {id:'recepcion', title:'Recepción Digital', subtitle:'Ahora incluye empresa, firmantes, autorización de entrada, síntomas del conductor, fotos y comprobante.'},
+    {id:'orden', title:'Orden de Trabajo', subtitle:'Centro operativo de responsables, bitácora, bloqueos, gastos asociados y trazabilidad de la reparación.'},
+    {id:'diagnostico', title:'Diagnóstico Progresivo', subtitle:'Separa trabajos confirmados de sospechados y conecta la evaluación técnica con la cotización comercial.'},
+    {id:'autorizacion', title:'Cotización y Autorización', subtitle:'Aprobación digital con respaldo por correo en daños ocultos, cambios de alcance o gastos adicionales.'},
+    {id:'gastos', title:'Gastos por OT', subtitle:'Controla compras, servicios externos, traslados e imprevistos vinculados a una orden específica.'},
+    {id:'proveedores', title:'Historial Proveedor', subtitle:'Consulta compras por proveedor, repuesto, precio y fecha para cotizar con valores actualizados.'},
+    {id:'calidad', title:'Calidad y Prueba Ruta', subtitle:'Checklist final con fotos, prueba estática, prueba de ruta y responsable de validación.'},
+    {id:'entrega', title:'Entrega y Garantía', subtitle:'Entrega formal con kilometraje, combustible, observaciones, garantía 30 días y seguimiento automático 72h.'},
+    {id:'finanzas', title:'Control Financiero', subtitle:'Diferencia venta, margen y caja; controla gastos no previstos, plazo de pago y recuperación de costos.'},
+    {id:'portal', title:'Portal Cliente', subtitle:'Visibilidad restringida para que el gestor de flota vea solo sus vehículos, estados, ETA y aprobaciones.'},
+    {id:'parametros', title:'Parámetros Negocio', subtitle:'Roles, permisos, flujos de autorización, plazos de pago, capacidad y márgenes por cliente.'},
+    {id:'proximos', title:'Próximos Pasos', subtitle:'Acciones acordadas para Alexander, Deivy y el grupo antes de la presentación con jefe y don Jorge.'},
+    {id:'validacion', title:'Validación Ejecutiva', subtitle:'Clasificación de información, riesgos y criterios Go / No Go para decidir piloto y alcance.'}
+  ];
+
+  const nav = document.getElementById('nav');
+  sections.forEach((s, i)=>{
+    const b = document.createElement('button');
+    b.className = 'navbtn' + (i===0 ? ' active' : '');
+    b.innerHTML = `<span class="navnum">${i+1}</span><span>${s.title}</span>`;
+    b.onclick = ()=>openSection(s.id);
+    nav.appendChild(b);
+  });
+
+  function openSection(id){
+    const item = sections.find(s=>s.id===id) || sections[0];
+    document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
+    document.getElementById(item.id).classList.add('active');
+    document.querySelectorAll('.navbtn').forEach((btn,idx)=>btn.classList.toggle('active', sections[idx].id===item.id));
+    document.getElementById('title').textContent = item.title;
+    document.getElementById('subtitle').textContent = item.subtitle;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function toast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;
+    t.style.opacity=1;
+    t.style.transform='translateY(0)';
+    setTimeout(()=>{t.style.opacity=0;t.style.transform='translateY(10px)'},2200);
+  }
+</script>
+</body>
+</html>
